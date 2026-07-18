@@ -1,4 +1,4 @@
-# Canvora — visuals for AI agents
+# Canvora – visuals for AI agents
 
 Turn any idea, URL, doc, or PDF into on-brand visuals: **100+ formats** (posts, carousels, decks, ads, documents), generated natively in **150+ languages**. Brand kits keep colors, fonts, logo, and tone consistent per client.
 
