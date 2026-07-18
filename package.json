@@ -1,0 +1,13 @@
+{
+  "name": "canvora-cli",
+  "version": "1.0.0",
+  "description": "CLI for Canvora (canvora.ai): turn any idea, URL, doc, or PDF into on-brand visuals in 100+ formats, native in 150+ languages. Built for AI agents and automation.",
+  "bin": { "canvora": "bin/canvora.js" },
+  "files": ["bin", "README.md", "LICENSE"],
+  "engines": { "node": ">=18" },
+  "keywords": ["canvora", "ai", "agents", "mcp", "image-generation", "visuals", "design", "openclaw", "social-media", "carousel"],
+  "homepage": "https://canvora.ai/for-agents",
+  "repository": { "type": "git", "url": "git+https://github.com/canvora/canvora-mcp.git" },
+  "bugs": { "url": "https://github.com/canvora/canvora-mcp/issues" },
+  "license": "MIT"
+}
