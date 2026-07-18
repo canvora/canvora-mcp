@@ -65,6 +65,7 @@ Every command takes `--json` for machine-readable stdout; progress and errors go
 --brand <uuid>            apply a brand kit
 --style <name>            modern | minimal | bold | elegant | playful | corporate | creative | dark
 --resolution 2K|4K        4K on paid plans
+--language <code-or-name> visual text language ("es", "Spanish"); default: matches your input's language
 --wait                    poll until done (--timeout 600, --poll 5 seconds)
 --json                    machine-readable output
 ```

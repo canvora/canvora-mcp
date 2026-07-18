@@ -22,7 +22,7 @@ process.stderr.on('error', (e) => { if (e.code === 'EPIPE') process.exit(0); thr
 
 const fs = require('fs');
 const path = require('path');
-const VERSION = '1.0.0';
+const VERSION = '1.1.0';
 const API_URL = (process.env.CANVORA_API_URL || 'https://api.canvora.ai').replace(/\/+$/, '');
 const API_KEY = process.env.CANVORA_API_KEY || '';
 const REQUEST_TIMEOUT_MS = 60000;
@@ -196,6 +196,7 @@ async function cmdGenerate(flags) {
   if (flags.style) body.visualStyle = String(flags.style);
   if (flags.resolution) body.resolution = String(flags.resolution);
   if (flags.title) body.title = String(flags.title);
+  if (flags.language) body.language = String(flags.language);
 
   const created = await api('/api/generations', { method: 'POST', body });
   const gen = created.generation;
@@ -290,6 +291,7 @@ commands:
                                     [--slides <format>=<n>] [--brand <uuid>]
                                     [--style modern|minimal|bold|elegant|playful|corporate|creative|dark]
                                     [--resolution 2K|4K] [--title <t>]
+                                    [--language <code-or-name>]  (default: matches input language)
                                     [--wait [--timeout 600] [--poll 5]]
   status      check a generation    canvora status <generationId>
   download    save output files     canvora download <generationId> [--dir out/]

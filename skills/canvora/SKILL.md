@@ -58,8 +58,9 @@ carousels. Common ones: `instagram_post`, `instagram_carousel`,
 ## Styles and language
 
 `--style` accepts: modern, minimal, bold, elegant, playful, corporate,
-creative, dark. Content language is detected from the input; visuals are
-generated natively in that language (not translated afterward).
+creative, dark. Visuals are generated natively in the language of your input
+(a Spanish idea yields a Spanish carousel). To force a specific language,
+pass `--language` with a code or name: `--language es`, `--language Turkish`.
 
 ## Budgeting and errors
 
