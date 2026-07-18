@@ -1,5 +1,5 @@
 {
-  "name": "canvora-cli",
+  "name": "@canvora/cli",
   "version": "1.0.0",
   "description": "CLI for Canvora (canvora.ai): turn any idea, URL, doc, or PDF into on-brand visuals in 100+ formats, native in 150+ languages. Built for AI agents and automation.",
   "bin": { "canvora": "bin/canvora.js" },

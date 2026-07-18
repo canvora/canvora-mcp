@@ -26,7 +26,7 @@ Step-by-step: [canvora.ai/help/integrations/mcp-setup](https://canvora.ai/help/i
 ## Option 2 — CLI (OpenClaw, Hermes, shell-native agents)
 
 ```bash
-npm install -g canvora-cli
+npm install -g @canvora/cli
 
 # or install the agent skill (Claude Code, Cursor, Codex, OpenCode and 60+ agents):
 npx skills add canvora/canvora-mcp

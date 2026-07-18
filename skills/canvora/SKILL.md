@@ -12,7 +12,7 @@ the client's colors, fonts, logo, and tone.
 
 ## Setup (once)
 
-1. `npm install -g canvora-cli` (Node 18+, zero dependencies)
+1. `npm install -g @canvora/cli` (Node 18+, zero dependencies)
 2. Get an API key: canvora.ai → Integrations → API Keys (free plan works, no card)
 3. `export CANVORA_API_KEY=vd_...`
 
