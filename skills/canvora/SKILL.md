@@ -56,32 +56,26 @@ The final JSON contains `generation.outputs[]`, each with a stable CDN
   hand you a topic, use `--idea`; if they hand you a link or file, pass it
   directly instead of copy-pasting its text.
 
-## Choosing formats: what the user wants -> what to generate
+## Choosing formats
 
-Run `canvora formats --json` for the full catalog (id, dimensions, carousel
-flag). The decision layer:
+The live catalog is the source of truth - do not guess format IDs:
 
-| User intent | Formats to use |
-|---|---|
-| Instagram feed post | `instagram_post` (square) or `instagram_portrait` (taller, more feed space) |
-| Explain / teach / listicle on Instagram | `instagram_carousel` or `instagram_carousel_portrait` + `--slides` |
-| Story / vertical | `instagram_story`, `facebook_story`, `whatsapp_status` |
-| LinkedIn authority content | `linkedin_carousel_portrait` (recommended) + `linkedin_post` |
-| Twitter/X | `twitter_post`; thread -> `twitter_thread` (carousel); up to 4 images -> `x_multi_image` |
-| Quote / stat / tip / testimonial | `quote_card`, `stat_card`, `tip_card`, `testimonial_card` |
-| Announce something (launch, event, news) | `announcement_card` + `instagram_post` + `instagram_story` |
-| Compare two things | `comparison_chart` (data-heavy) or `comparison_card` (social-friendly) |
-| Steps / process / how-it-works | `process_flow`, `process_card`, or a carousel with one step per slide |
-| Infographic | `infographic` (short) or `infographic_long` (scrolling) |
-| Presentation / deck | `presentation_slide` (16:9) + `--slides`; investors -> `pitch_deck`; sales -> `sales_deck`; training -> `training_slide` |
-| Document / handout | `one_pager`, `cheat_sheet`, `executive_summary`, `worksheet`; multi-page -> `document_page` + `--slides` |
-| Blog/article promotion | `blog_header`, `og_image`, plus a carousel from the same URL |
-| Ads | `ad_square`, `ad_landscape`, `ad_portrait`, `google_display` |
-| YouTube | `youtube_thumbnail`, `youtube_banner` |
-| Pinterest | `pinterest_pin`, `pinterest_long`; multi-frame -> `pinterest_idea` |
-| Email | `email_header`, `email_hero` |
-| Landing page visuals | the `landingPage-*` family (Hero, Feature, Stats, CTA, ...) |
-| Book/course | `ebook_cover`, `course_thumbnail` |
+```bash
+canvora formats --json
+```
+
+Each entry has `id`, `dimensions`, `category` (social, marketing, document,
+presentation, advertising, infographic, email, landing_page), `is_carousel`,
+and a `description` that includes recommendations (e.g. the LinkedIn carousel
+marked "recommended", `pitch_deck` "for investors"). Match the user's intent
+against category + description and pick accordingly. Carousel-flagged formats
+take `--slides`.
+
+Combos worth knowing (these span formats, so the catalog can't tell you):
+- Announcing something: `announcement_card` + `instagram_post` + `instagram_story`
+- Promoting an article: `blog_header` + `og_image` + a carousel from the same URL
+- Ad campaign: `ad_square` + `ad_landscape` + `ad_portrait` (covers all placements)
+- A claim + its proof: a carousel plus `stat_card` or `testimonial_card` from the same source
 
 Batching: one generation can carry several formats
 (`--format instagram_post,linkedin_post,quote_card`) - all outputs come from
