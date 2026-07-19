@@ -1,5 +1,6 @@
 ---
 name: canvora
+version: 1.2.0
 description: Create on-brand visuals (social posts, carousels, decks, ads, documents) from any text, URL, or PDF via Canvora. 100+ formats, native generation in 150+ languages, per-client brand kits. Use when the user asks to create, generate, or design visual content for social media, marketing, or presentations.
 ---
 
