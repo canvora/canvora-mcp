@@ -89,7 +89,7 @@ Full API guide: [canvora.ai/help/integrations/api-keys](https://canvora.ai/help/
 ## Built to be called by software
 
 - **Predictable costs** — flat credit pricing (10/visual, 15/slide); `canvora credits` before big jobs; failed generations auto-refund.
-- **Human in the loop** — everything an agent creates lands in the Canvora dashboard for review, editing, and export.
+- **Human in the loop** — everything your agent creates also lands in your Canvora dashboard, ready for review, editing, and export before it goes anywhere.
 - **Scoped, revocable keys** — hashed at rest, per-key usage tracking, one-click revoke.
 - **Outputs on a CDN** — stable URLs your agent can post, embed, or hand to a scheduler.
 - **Works on every plan** — API and MCP access included on Free (free credits, no card).
