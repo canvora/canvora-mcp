@@ -47,8 +47,13 @@ The final JSON contains `generation.outputs[]`, each with a stable CDN
 `canvora formats --json` lists all format IDs with dimensions and which are
 carousels. Common ones: `instagram_post`, `instagram_carousel`,
 `linkedin_post`, `linkedin_carousel`, `twitter_post`, `blog_header`,
-`youtube_thumbnail`, `presentation_slide`. Carousel formats need
-`--slides <format>=<n>` (1-10).
+`youtube_thumbnail`, `presentation_slide`. Carousel formats take
+`--slides <format>=<n>` (1-10, default 5).
+
+Choosing the slide count: if the idea or content promises N items ("5 tips",
+"6 formas", "7 steps"), set `--slides` to N so each item gets its own slide
+(or N+1 if you also want a cover). If you omit `--slides`, the default is 5
+and Canvora will combine or stretch the items to fit.
 
 ## Brand kits
 

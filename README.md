@@ -61,7 +61,7 @@ Every command takes `--json` for machine-readable stdout; progress and errors go
 --url <url>               extract content from a webpage
 --file-url <pdf-url>      extract content from a PDF
 --format <id>[,<id>...]   output formats (see: canvora formats)
---slides <format>=<n>     slide count for carousel/deck formats (1-10)
+--slides <format>=<n>     slide count for carousel/deck formats (1-10, default 5); match it to the item count your idea promises
 --brand <uuid>            apply a brand kit
 --style <name>            modern | minimal | bold | elegant | playful | corporate | creative | dark
 --resolution 2K|4K        4K on paid plans
