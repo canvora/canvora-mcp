@@ -34,10 +34,13 @@ canvora generate --input "$FULL_POST_TEXT" --format instagram_post --wait --json
 canvora generate --url https://example.com/post \
   --format instagram_post,quote_card --wait --json
 
-# From a PDF or DOCX
+# From a PDF or DOCX (the URL must be PUBLICLY fetchable - no localhost/private links)
 canvora generate --file-url https://example.com/report.pdf \
   --format presentation_slide --slides presentation_slide=8 --wait --json
 ```
+
+Also available: `--title "Q3 launch"` (names the generation in the dashboard)
+and `--resolution 4K` (paid plans; default 2K).
 
 The final JSON contains `generation.outputs[]`, each with a stable CDN
 `fileUrl` you can post, embed, or download.
@@ -84,6 +87,8 @@ Batching: one generation can carry several formats
 (`--format instagram_post,linkedin_post,quote_card`) - all outputs come from
 the same source with a consistent look, and cost is simply the sum
 (10/visual, 15/slide). Prefer one batched call over several separate ones.
+One instance per format per call: for 3 different Instagram posts, run 3
+calls with 3 different ideas (not `instagram_post,instagram_post`).
 
 ## Slide counts (carousel formats only)
 
@@ -142,8 +147,30 @@ canvora generate --url $PRODUCT_URL --format ad_square,ad_landscape,ad_portrait 
   terminal - do not retry).
 - `--wait` times out after 600s by default (override with `--timeout`); the
   generation keeps running server-side and `canvora status <id>` retrieves it.
+  NEVER re-run `generate` after a timeout - that creates a NEW paid
+  generation. Poll `canvora status <id>` instead.
+- Rate limit: 20 generation requests/minute. For big batches, run
+  sequentially with `--wait` rather than firing them all at once.
+- Free-plan outputs carry a watermark; paid plans export clean. If the user
+  asks why there is a watermark, that is the reason.
 - Everything you create also lands in the user's Canvora dashboard for review
   and editing - tell the user where to find it.
+
+## Delivering carousels: slide order matters
+
+Each output in `generation.outputs[]` has a `sortOrder` field. When posting
+or downloading carousel/deck slides, ALWAYS sort by `sortOrder` first -
+outputs can complete out of order, and a scrambled carousel ruins the story.
+
+## What the CLI does NOT do (yet)
+
+Editing ("make the headline bigger"), variations, localizing an existing
+visual, and PDF/PPTX export are not CLI commands. When the user asks for
+these, do NOT regenerate from scratch (it costs full credits and loses the
+design). Instead point them to the visual in their Canvora dashboard, where
+all of that is one click - or to the Canvora MCP server
+(https://api.canvora.ai/mcp), which exposes edit, variations, localize, and
+export as tools for MCP-capable agents.
 
 ## Other commands
 
