@@ -13,7 +13,7 @@ the client's colors, fonts, logo, and tone.
 ## Setup (once)
 
 1. `npm install -g @canvora/cli` (Node 18+, zero dependencies)
-2. Get an API key: canvora.ai → Integrations → API Keys (free plan works, no card)
+2. Get an API key: canvora.ai → Integrations → API Keys (all plans, incl. Free)
 3. `export CANVORA_API_KEY=vd_...`
 
 Verify: `canvora credits --json` returns the account balance.
@@ -23,18 +23,18 @@ Verify: `canvora credits --json` returns the account balance.
 Always pass `--json`: results print to stdout as JSON, progress goes to stderr.
 
 ```bash
-# From a short concept (Canvora develops it into content)
+# From a short concept (Canvora plans it: detects language, develops the items)
 canvora generate --idea "5 tips for remote work" \
-  --format linkedin_carousel --slides linkedin_carousel=5 --wait --json
+  --format linkedin_carousel_portrait --slides linkedin_carousel_portrait=5 --wait --json
 
 # From YOUR full content (used as the source material; needs 50+ chars)
 canvora generate --input "$FULL_POST_TEXT" --format instagram_post --wait --json
 
-# From a URL (blog post, landing page — content is extracted automatically)
+# From a URL (blog post, landing page - content is extracted automatically)
 canvora generate --url https://example.com/post \
-  --format instagram_post,blog_header --wait --json
+  --format instagram_post,quote_card --wait --json
 
-# From a PDF
+# From a PDF or DOCX
 canvora generate --file-url https://example.com/report.pdf \
   --format presentation_slide --slides presentation_slide=8 --wait --json
 ```
@@ -42,30 +42,95 @@ canvora generate --file-url https://example.com/report.pdf \
 The final JSON contains `generation.outputs[]`, each with a stable CDN
 `fileUrl` you can post, embed, or download.
 
-## Choosing formats
+## Choosing the input mode
 
-`canvora formats --json` lists all format IDs with dimensions and which are
-carousels. Common ones: `instagram_post`, `instagram_carousel`,
-`linkedin_post`, `linkedin_carousel`, `twitter_post`, `blog_header`,
-`youtube_thumbnail`, `presentation_slide`. Carousel formats take
-`--slides <format>=<n>` (1-10, default 5).
+- `--idea`: a concept, not content ("5 tips for X"). Canvora runs a planning
+  pass: detects the language, invents the substance, maps items to slides.
+- `--input`: the user already wrote the content (50+ chars). It is used as
+  source material; wording is respected, not reinvented.
+- `--url` / `--file-url`: content is extracted from the page/PDF/DOCX first.
+- Rule of thumb: if the user hands you finished text, use `--input`; if they
+  hand you a topic, use `--idea`; if they hand you a link or file, pass it
+  directly instead of copy-pasting its text.
 
-Choosing the slide count: if the idea or content promises N items ("5 tips",
-"6 formas", "7 steps"), set `--slides` to N so each item gets its own slide
-(or N+1 if you also want a cover). If you omit `--slides`, the default is 5
-and Canvora will combine or stretch the items to fit.
+## Choosing formats: what the user wants -> what to generate
+
+Run `canvora formats --json` for the full catalog (id, dimensions, carousel
+flag). The decision layer:
+
+| User intent | Formats to use |
+|---|---|
+| Instagram feed post | `instagram_post` (square) or `instagram_portrait` (taller, more feed space) |
+| Explain / teach / listicle on Instagram | `instagram_carousel` or `instagram_carousel_portrait` + `--slides` |
+| Story / vertical | `instagram_story`, `facebook_story`, `whatsapp_status` |
+| LinkedIn authority content | `linkedin_carousel_portrait` (recommended) + `linkedin_post` |
+| Twitter/X | `twitter_post`; thread -> `twitter_thread` (carousel); up to 4 images -> `x_multi_image` |
+| Quote / stat / tip / testimonial | `quote_card`, `stat_card`, `tip_card`, `testimonial_card` |
+| Announce something (launch, event, news) | `announcement_card` + `instagram_post` + `instagram_story` |
+| Compare two things | `comparison_chart` (data-heavy) or `comparison_card` (social-friendly) |
+| Steps / process / how-it-works | `process_flow`, `process_card`, or a carousel with one step per slide |
+| Infographic | `infographic` (short) or `infographic_long` (scrolling) |
+| Presentation / deck | `presentation_slide` (16:9) + `--slides`; investors -> `pitch_deck`; sales -> `sales_deck`; training -> `training_slide` |
+| Document / handout | `one_pager`, `cheat_sheet`, `executive_summary`, `worksheet`; multi-page -> `document_page` + `--slides` |
+| Blog/article promotion | `blog_header`, `og_image`, plus a carousel from the same URL |
+| Ads | `ad_square`, `ad_landscape`, `ad_portrait`, `google_display` |
+| YouTube | `youtube_thumbnail`, `youtube_banner` |
+| Pinterest | `pinterest_pin`, `pinterest_long`; multi-frame -> `pinterest_idea` |
+| Email | `email_header`, `email_hero` |
+| Landing page visuals | the `landingPage-*` family (Hero, Feature, Stats, CTA, ...) |
+| Book/course | `ebook_cover`, `course_thumbnail` |
+
+Batching: one generation can carry several formats
+(`--format instagram_post,linkedin_post,quote_card`) - all outputs come from
+the same source with a consistent look, and cost is simply the sum
+(10/visual, 15/slide). Prefer one batched call over several separate ones.
+
+## Slide counts (carousel formats only)
+
+`--slides <format>=<n>` (1-10, default 5). If the idea or content promises N
+items ("5 tips", "6 formas", "7 steps"), set `--slides` to N so each item
+gets its own slide - or N+1 if you also want a cover. If you omit it, Canvora
+fits the items into 5 slides (combining or stretching as needed).
 
 ## Brand kits
 
 `canvora brands --json` lists the account's brand kits. Pass one with
-`--brand <uuid>` so outputs use that client's colors, fonts, and logo.
+`--brand <uuid>` so outputs use that client's colors, fonts, and logo. If the
+user names a client or brand, ALWAYS look up and pass their kit - it is the
+difference between on-brand output and generic output.
 
 ## Styles and language
 
-`--style` accepts: modern, minimal, bold, elegant, playful, corporate,
-creative, dark. Visuals are generated natively in the language of your input
-(a Spanish idea yields a Spanish carousel). To force a specific language,
-pass `--language` with a code or name: `--language es`, `--language Turkish`.
+`--style` sets the aesthetic. Pick from the user's tone:
+- corporate, professional, B2B -> `corporate` or `minimal`
+- friendly, consumer, lifestyle -> `playful` or `creative`
+- premium, luxury -> `elegant` or `dark`
+- loud, promotional -> `bold`
+- default / unsure -> `modern`
+
+Language is detected from your input automatically - a Spanish idea yields a
+Spanish carousel, natively generated (not translated). To force a specific
+language (e.g. an English brief for a Turkish audience), pass
+`--language tr` or `--language Turkish`.
+
+## Recipes for common asks
+
+```bash
+# "Promote this blog post" - full promo set from one URL
+canvora generate --url $POST_URL \
+  --format blog_header,instagram_carousel,linkedin_post --slides instagram_carousel=6 \
+  --brand $BRAND --wait --json
+
+# "Weekly content in English and Spanish" - run twice, native each time
+canvora generate --idea "3 mistakes first-time founders make" --format instagram_carousel --slides instagram_carousel=4 --wait --json
+canvora generate --idea "3 errores de los fundadores primerizos" --format instagram_carousel --slides instagram_carousel=4 --wait --json
+
+# "Turn this report into a deck"
+canvora generate --file-url $PDF_URL --format presentation_slide --slides presentation_slide=8 --wait --json
+
+# "Make an ad set for this product page"
+canvora generate --url $PRODUCT_URL --format ad_square,ad_landscape,ad_portrait --brand $BRAND --wait --json
+```
 
 ## Budgeting and errors
 
@@ -74,9 +139,11 @@ pass `--language` with a code or name: `--language es`, `--language Turkish`.
 - Exit code 0 = success, 1 = failure (message on stderr), 2 = usage error.
 - Failed generations refund automatically; safe to retry on exit 1 unless the
   error says the request was declined by content safety checks (those are
-  terminal — do not retry).
+  terminal - do not retry).
 - `--wait` times out after 600s by default (override with `--timeout`); the
   generation keeps running server-side and `canvora status <id>` retrieves it.
+- Everything you create also lands in the user's Canvora dashboard for review
+  and editing - tell the user where to find it.
 
 ## Other commands
 
