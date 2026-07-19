@@ -22,7 +22,7 @@ process.stderr.on('error', (e) => { if (e.code === 'EPIPE') process.exit(0); thr
 
 const fs = require('fs');
 const path = require('path');
-const VERSION = '1.1.0';
+const VERSION = '1.2.0';
 const API_URL = (process.env.CANVORA_API_URL || 'https://api.canvora.ai').replace(/\/+$/, '');
 const API_KEY = process.env.CANVORA_API_KEY || '';
 const REQUEST_TIMEOUT_MS = 60000;
@@ -197,28 +197,31 @@ async function cmdGenerate(flags) {
   if (flags.resolution) body.resolution = String(flags.resolution);
   if (flags.title) body.title = String(flags.title);
   if (flags.language) body.language = String(flags.language);
+  if (flags.exact) body.useExactContent = true;
+  if (flags.workspace) body.workspaceId = String(flags.workspace);
 
   const created = await api('/api/generations', { method: 'POST', body });
   const gen = created.generation;
   say(`generation ${gen.id} started (${gen.creditsCharged} credits)`);
 
+  await finishOrWait(created, gen.id, flags);
+}
+
+// Shared by generate/localize/variations: print id, or poll to terminal state.
+async function finishOrWait(created, genId, flags) {
   if (!flags.wait) {
     emit(created, flags.json, () => {
-      process.stdout.write(`${gen.id}\n`);
-      process.stdout.write(`check progress: canvora status ${gen.id}\n`);
+      process.stdout.write(`${genId}\n`);
+      process.stdout.write(`check progress: canvora status ${genId}\n`);
     });
     return;
   }
-
-  // --wait: poll until terminal state
   const timeoutMs = (parseInt(flags.timeout, 10) || 600) * 1000;
   const pollMs = (parseInt(flags.poll, 10) || 5) * 1000;
   const started = Date.now();
-  let last = null;
-
   while (Date.now() - started < timeoutMs) {
     await new Promise((r) => setTimeout(r, pollMs));
-    last = await api(`/api/generations/${gen.id}`);
+    const last = await api(`/api/generations/${genId}`);
     const g = last.generation;
     say(`  ${g.status}${g.progress != null ? ` ${g.progress}%` : ''}`);
     if (['completed', 'failed', 'partial', 'cancelled'].includes(g.status)) {
@@ -233,7 +236,89 @@ async function cmdGenerate(flags) {
       return;
     }
   }
-  fail(`timed out after ${timeoutMs / 1000}s waiting for generation ${gen.id} (it may still complete: canvora status ${gen.id})`);
+  fail(`timed out after ${timeoutMs / 1000}s waiting for generation ${genId} (it may still complete: canvora status ${genId})`);
+}
+
+// ---------------------------------------------------------------------------
+// v1.2: refine existing generations (localize / variations / edit)
+// All three preserve the original design instead of regenerating from scratch.
+// Server gates these behind the Visual Editor feature (Starter+ or an active
+// Campaign Pack) - a 403 here means the plan lacks it, not an auth problem.
+// ---------------------------------------------------------------------------
+
+async function cmdLocalize(flags, id) {
+  requireKey();
+  if (!id) fail('usage: canvora localize <generationId> --language <code-or-name> [--wait]', 2);
+  if (!flags.language) fail('--language is required (e.g. --language es, --language Spanish)', 2);
+  const created = await api('/api/images/localize-mcp', {
+    method: 'POST',
+    body: { referenceGenerationId: id, language: String(flags.language) }
+  });
+  say(`localizing ${created.expectedCount} visual(s) to ${flags.language} (${created.creditCost} credits) -> generation ${created.generationId}`);
+  await finishOrWait(created, created.generationId, flags);
+}
+
+async function cmdVariations(flags, id) {
+  requireKey();
+  if (!id) fail('usage: canvora variations <generationId> [--count <n>] [--wait]', 2);
+  const count = parseInt(flags.count, 10) || 1;
+  const created = await api('/api/images/variation-mcp', {
+    method: 'POST',
+    body: { referenceGenerationId: id, count }
+  });
+  say(`creating ${created.expectedCount} variation(s) (${created.creditCost} credits) -> generation ${created.generationId}`);
+  await finishOrWait(created, created.generationId, flags);
+}
+
+async function cmdEdit(flags, outputId) {
+  requireKey();
+  if (!outputId) fail('usage: canvora edit <outputId> --prompt "change..." [--yes | --confirm "exact instruction"]', 2);
+  const prompt = flags.prompt && String(flags.prompt).trim();
+  if (!prompt) fail('--prompt is required (what to change, in plain language)', 2);
+
+  // One-shot path: caller supplies the exact confirmed instruction
+  if (flags.confirm && typeof flags.confirm === 'string') {
+    const done = await api('/api/images/edit', {
+      method: 'POST',
+      body: { outputId, prompt, confirmedInstruction: String(flags.confirm) }
+    });
+    return emitEditResult(done, flags);
+  }
+
+  // Step 1: preview
+  const first = await api('/api/images/edit', { method: 'POST', body: { outputId, prompt } });
+  if (first.needsClarification) {
+    say(`needs clarification: ${first.clarificationMessage}`);
+    for (const s of first.suggestions || []) say(`  - ${s}`);
+    fail('re-run with a more specific --prompt', 1);
+  }
+  if (first.needsConfirmation) {
+    if (!flags.yes) {
+      emit(first, flags.json, () => {
+        process.stdout.write(`preview: ${first.preview}\n`);
+        process.stdout.write(`confirm: canvora edit ${outputId} --prompt ${JSON.stringify(prompt)} --yes\n`);
+      });
+      return;
+    }
+    // Step 2: auto-confirm with the previewed interpretation
+    const done = await api('/api/images/edit', {
+      method: 'POST',
+      body: { outputId, prompt, confirmedInstruction: first.preview }
+    });
+    return emitEditResult(done, flags);
+  }
+  return emitEditResult(first, flags);
+}
+
+function emitEditResult(done, flags) {
+  if (done.needsClarification) {
+    say(`needs clarification: ${done.clarificationMessage}`);
+    fail('re-run with a more specific --prompt', 1);
+  }
+  emit(done, flags.json, () => {
+    if (done.imageUrl) process.stdout.write(`${done.imageUrl}\n`);
+  });
+  if (done.imageUrl) say(`edited (${done.creditsCharged} credits, v${done.version})`);
 }
 
 async function cmdStatus(flags, id) {
@@ -292,7 +377,14 @@ commands:
                                     [--style modern|minimal|bold|elegant|playful|corporate|creative|dark]
                                     [--resolution 2K|4K] [--title <t>]
                                     [--language <code-or-name>]  (default: matches input language)
+                                    [--exact]  (use --input text verbatim, no rewording - quotes, taglines)
+                                    [--workspace <uuid>]  (bill a team workspace pool)
                                     [--wait [--timeout 600] [--poll 5]]
+  localize    same design, new language
+                                    canvora localize <generationId> --language es [--wait]
+  variations  riff on a generation  canvora variations <generationId> [--count 2] [--wait]
+  edit        change one visual     canvora edit <outputId> --prompt "warmer colors" [--yes]
+                                    (no --yes: prints the interpreted edit for confirmation)
   status      check a generation    canvora status <generationId>
   download    save output files     canvora download <generationId> [--dir out/]
   formats     list all format IDs
@@ -318,6 +410,9 @@ async function main() {
   try {
     switch (cmd) {
       case 'generate': return await cmdGenerate(flags);
+      case 'localize': return await cmdLocalize(flags, pos[1]);
+      case 'variations': return await cmdVariations(flags, pos[1]);
+      case 'edit': return await cmdEdit(flags, pos[1]);
       case 'status': return await cmdStatus(flags, pos[1]);
       case 'download': return await cmdDownload(flags, pos[1]);
       case 'formats': return await cmdFormats(flags);

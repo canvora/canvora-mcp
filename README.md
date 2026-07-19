@@ -45,6 +45,9 @@ canvora generate \
 | Command | What it does |
 |---|---|
 | `canvora generate` | Create visuals from an `--idea` (short concept, Canvora develops it), `--input` (your full content text), `--url`, or `--file-url` (PDF). `--wait` polls to completion and prints output URLs. |
+| `canvora localize <id> --language es` | Same design, new language: translates an existing generation's visuals, layout untouched |
+| `canvora variations <id> [--count n]` | Fresh takes on an existing generation's visuals |
+| `canvora edit <outputId> --prompt "..."` | Natural-language edit of one visual (previews the change; `--yes` auto-confirms) |
 | `canvora status <id>` | Check a generation and list its output URLs |
 | `canvora download <id> --dir out/` | Save all output files locally |
 | `canvora formats` | All 100+ format IDs with dimensions |
@@ -66,6 +69,8 @@ Every command takes `--json` for machine-readable stdout; progress and errors go
 --style <name>            modern | minimal | bold | elegant | playful | corporate | creative | dark
 --resolution 2K|4K        4K on paid plans
 --language <code-or-name> visual text language ("es", "Spanish"); default: matches your input's language
+--exact                   use --input text verbatim, no rewording (quotes, taglines)
+--workspace <uuid>        bill a team workspace pool instead of your personal credits
 --wait                    poll until done (--timeout 600, --poll 5 seconds)
 --json                    machine-readable output
 ```

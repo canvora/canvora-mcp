@@ -12,7 +12,7 @@ the client's colors, fonts, logo, and tone.
 
 ## Setup (once)
 
-1. `npm install -g @canvora/cli` (Node 18+, zero dependencies)
+1. `npm install -g @canvora/cli` (Node 18+, zero dependencies; v1.2+ for localize/variations/edit)
 2. Get an API key: canvora.ai → Integrations → API Keys (all plans, incl. Free)
 3. `export CANVORA_API_KEY=vd_...`
 
@@ -156,15 +156,37 @@ Each output in `generation.outputs[]` has a `sortOrder` field. When posting
 or downloading carousel/deck slides, ALWAYS sort by `sortOrder` first -
 outputs can complete out of order, and a scrambled carousel ruins the story.
 
+## Refining existing visuals (NEVER regenerate from scratch)
+
+When the user wants to change something about a visual you already made,
+regenerating loses the design and costs full credits. Use these instead
+(each costs the 10-credit edit rate per visual; they need the Visual Editor
+feature - Starter plan or an active Campaign Pack; a 403 means the plan
+lacks it, not an auth problem):
+
+```bash
+# Same design, different language - the layout survives, only text changes
+canvora localize <generationId> --language es --wait --json
+
+# Fresh takes on the same generation
+canvora variations <generationId> --count 2 --wait --json
+
+# Natural-language edit of ONE output. Without --yes it prints Canvora's
+# interpretation of your instruction for confirmation; add --yes to execute.
+canvora edit <outputId> --prompt "make the headline bigger" --yes --json
+```
+
+If `edit` replies "needs clarification", re-run with a more specific prompt.
+
+Exact wording: when the user's text must appear verbatim (quotes, taglines,
+slogans), generate with `--input "the exact text" --exact` - this disables
+rewording.
+
 ## What the CLI does NOT do (yet)
 
-Editing ("make the headline bigger"), variations, localizing an existing
-visual, and PDF/PPTX export are not CLI commands. When the user asks for
-these, do NOT regenerate from scratch (it costs full credits and loses the
-design). Instead point them to the visual in their Canvora dashboard, where
-all of that is one click - or to the Canvora MCP server
-(https://api.canvora.ai/mcp), which exposes edit, variations, localize, and
-export as tools for MCP-capable agents.
+PDF/PPTX/ZIP export is not a CLI command - point the user to their Canvora
+dashboard, or to the Canvora MCP server (https://api.canvora.ai/mcp) which
+exposes export as a tool for MCP-capable agents.
 
 ## Other commands
 
