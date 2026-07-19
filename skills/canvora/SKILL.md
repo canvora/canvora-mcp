@@ -168,7 +168,8 @@ lacks it, not an auth problem):
 # Same design, different language - the layout survives, only text changes
 canvora localize <generationId> --language es --wait --json
 
-# Fresh takes on the same generation
+# Fresh takes on the same generation. NOTE: --count is PER OUTPUT -
+# count 2 on a 5-slide carousel makes 10 new images (100 credits).
 canvora variations <generationId> --count 2 --wait --json
 
 # Natural-language edit of ONE output. Without --yes it prints Canvora's

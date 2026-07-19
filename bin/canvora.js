@@ -383,6 +383,7 @@ commands:
   localize    same design, new language
                                     canvora localize <generationId> --language es [--wait]
   variations  riff on a generation  canvora variations <generationId> [--count 2] [--wait]
+                                    (--count is PER OUTPUT: 2 on a 5-slide carousel = 10 new images)
   edit        change one visual     canvora edit <outputId> --prompt "warmer colors" [--yes]
                                     (no --yes: prints the interpreted edit for confirmation)
   status      check a generation    canvora status <generationId>
