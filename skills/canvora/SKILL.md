@@ -27,9 +27,9 @@ Verify: `canvora credits --json` returns the account balance.
 
 ## Before you generate: the four things that decide the output
 
-Generation costs credits and is not instant — a single image is usually about a
-minute and a half, a 10-slide deck 7–8 minutes (see "Long runs"). Get these
-right on the first call; there is no cheap retry.
+Generation costs credits and is not instant — a single visual usually lands in
+under a minute or two, and multi-slide work scales from there (see "Long runs").
+Get these right on the first call; there is no cheap retry.
 Ask the user ONLY for what you cannot infer from the conversation — never
 interrogate. In order of impact:
 
@@ -129,6 +129,11 @@ difference between on-brand output and generic output.
 Add `--logo` to actually place the brand logo on the visual. `--brand` alone
 applies the colors, fonts and voice but **does not** stamp the logo.
 
+On a single-image format `--logo` applies to that image. On a **carousel or
+deck it applies to the first and last slide only** - the cover and the closing
+slide carry the mark, the middle stays clean. That is deliberate. If the user
+wants the logo on a middle slide, add it afterwards with an edit.
+
 ## Styles, art direction, and language
 
 `--style` sets the aesthetic: `modern` (default), `minimal`, `bold`,
@@ -158,12 +163,11 @@ language (e.g. an English brief for a Turkish audience), pass
 
 | Flag | Use it when |
 |---|---|
-| `--logo` | the visual should carry the brand mark (needs `--brand`) |
-| `--cta` | a carousel/deck should end on a call-to-action slide |
+| `--logo` | the visual should carry the brand mark (needs `--brand`; first + last slide on carousels) |
+| `--cta` | a carousel/deck should end on a call-to-action slide (it **consumes one of your slides** - ask for 6 with `--cta` and slide 6 is the CTA, not extra) |
 | `--no-text` | they want pure imagery: backgrounds, hero art, textures |
-| `--freeform` | they want the dimensions only, with no format-specific art direction |
+| `--freeform` | they want the format's shape only, with no format-specific art direction |
 | `--landing-page` | with `--url`: read a page's sections and produce a matching visual kit (Starter+) |
-| `--project <uuid>` | group everything into one campaign |
 | `--exact` | the text must appear verbatim (quotes, taglines, legal lines) |
 
 ## Recipes for common asks
@@ -207,17 +211,16 @@ canvora generate --url $PRODUCT_URL --format ad_square,ad_landscape,ad_portrait 
 
 `--wait` polls until done, up to 600s (`--timeout` to change). But the binding
 constraint is usually **your harness's shell timeout, not Canvora's** - many
-agent runtimes kill a shell command at 120s by default. Typical wall-clock:
-single image ~1.5 min, 5 slides ~4-5 min, 10 slides ~7-8 min, with a slow tail
-past 11 min.
+agent runtimes kill a shell command at 120s by default. A single visual lands in
+under a minute or two; multi-slide work takes proportionally longer.
 
 - **1-2 outputs:** `--wait` is fine if you can raise your shell timeout to 300s.
 - **3+ outputs:** do NOT use `--wait`. Fire the generation, keep the returned
   `generation.id`, and poll `canvora status <id> --json` in separate short
   commands until `status` is `completed`, `partial`, or `failed`.
-- A killed shell does NOT cancel anything - the generation completes server-side
-  and the credits are already spent. `canvora status <id>` always retrieves it.
-- **NEVER re-run `generate` after a timeout.** That creates a second paid
+- A killed shell does NOT cancel anything - the generation carries on
+  server-side. `canvora status <id>` always retrieves it.
+- **NEVER re-run `generate` after a timeout.** That starts a second, separate
   generation. Poll `status` instead. This is the single most expensive mistake
   an agent can make here.
 

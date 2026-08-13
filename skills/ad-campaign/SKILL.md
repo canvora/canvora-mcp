@@ -32,9 +32,9 @@ confirm that number. A campaign is several sequential calls, so **sum the whole
 plan and run `canvora credits --json` once before you start**: running dry
 halfway leaves a half-covered campaign with the earlier calls already paid for.
 Any single call producing 3+ creatives should fire-and-poll rather than `--wait`
-— most harnesses kill a shell command at 120s while the generation keeps running
-and the credits stay spent, and re-running `generate` after a timeout pays
-twice. See the `canvora` skill's "Long runs" section.
+— most harnesses kill a shell command at 120s while the generation carries on
+server-side, and re-running `generate` starts a second, separate job. See the
+`canvora` skill's "Long runs" section.
 
 ## Intake
 

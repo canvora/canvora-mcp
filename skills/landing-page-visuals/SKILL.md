@@ -28,8 +28,8 @@ canvora status "$ID" --json    # repeat every ~30s until completed
 `--landing-page` requires `--url` (it has nothing to read otherwise).
 
 A kit is up to 10 visuals, so fire-and-poll rather than `--wait` — most
-harnesses kill a shell command at 120s while the kit keeps rendering and the
-credits stay spent. Never re-run `generate` after a timeout; poll `status`
+harnesses kill a shell command at 120s while the kit carries on rendering
+server-side. Never re-run `generate` after a timeout; poll `status`
 (detail in the `canvora` skill's "Long runs" section). Say the cost in the same
 message as the run: 10 credits per visual, so a full kit is up to 100. Announce
 it, don't ask permission — but if the page could yield the full 10 and they
@@ -67,8 +67,9 @@ Note the IDs are camelCase with a hyphen — `landingPage-Hero`, not
 
 Usually just: **the URL** and **the brand kit**. Then two judgement calls:
 
-1. **Is the page live and public?** Firecrawl has to fetch it — staging behind
-   auth, localhost, and password walls won't work. Ask for the public URL.
+1. **Is the page live and public?** The page has to be publicly fetchable —
+   staging behind auth, localhost, and password walls won't work. Ask for the
+   public URL.
 2. **Whole page or one section?** If they only want a hero, don't use this mode
    — run `--format landingPage-Hero` with `--url` normally and spend 10 credits
    instead of a kit's worth.

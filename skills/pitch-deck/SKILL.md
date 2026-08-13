@@ -30,11 +30,10 @@ State the cost in the same message as the run — announce it, don't ask
 permission. When *you* chose the slide count (the defaults below) rather than
 the user, confirm that number with them; when they said "10 slides", just run it.
 
-Every deck is 3+ outputs, so fire-and-poll instead of `--wait`: a 10-slide deck
-takes 7-8 minutes and most harnesses kill a shell command at 120s, while the
-generation completes server-side and the credits stay spent. Never re-run
-`generate` after a timeout — poll `status`. See the `canvora` skill's "Long
-runs" section.
+Every deck is 3+ outputs, so fire-and-poll instead of `--wait`: most harnesses
+kill a shell command at 120s while the deck carries on rendering server-side.
+Never re-run `generate` after a timeout — that starts a second, separate job.
+Poll `status`. See the `canvora` skill's "Long runs" section.
 
 ## Intake — three questions, maximum
 

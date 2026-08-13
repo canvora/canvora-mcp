@@ -73,8 +73,8 @@ confirm that number first.
 
 Both of these fan out over the whole generation, so at 3+ outputs skip `--wait`
 and poll `status`: your harness likely kills a shell command at 120s while the
-work continues server-side and the credits stay spent. Never re-run the command
-after a timeout — that pays twice. See the `canvora` skill's "Long runs" section.
+work carries on server-side. Never re-run the command after a timeout — that
+starts a second, separate job. See the `canvora` skill's "Long runs" section.
 `--wait` is still fine when the source generation is a single visual.
 
 Both need the Visual Editor feature (Starter plan or an active Campaign Pack).

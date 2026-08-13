@@ -69,8 +69,8 @@ canvora status "$ID" --json    # repeat every ~30s until completed
 ```
 
 - A carousel is always 3+ outputs, so fire-and-poll — never `--wait`, which
-  your harness usually kills at 120s while the generation keeps running and the
-  credits stay spent. Never re-run `generate` after a timeout; poll `status`.
+  your harness usually kills at 120s while the generation carries on
+  server-side. Never re-run `generate` after a timeout; poll `status`.
   Detail in the `canvora` skill's "Long runs" section.
 - State the cost in the same message as the run — 15 credits per slide, so the
   6-slide carousel above is 90. Announce it, don't ask permission. Confirm the

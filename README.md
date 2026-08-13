@@ -16,7 +16,7 @@ npx skills add canvora/canvora-mcp
 canvora generate --idea "5 tips for remote work" \
   --format linkedin_carousel --slides linkedin_carousel=5 \
   --brand $BRAND_ID --wait --json
-# → 5 finished branded slides on CDN URLs, ~60 seconds
+# → 5 finished branded slides on CDN URLs
 ```
 
 Your agent writes the brief. Canvora does the design. The outputs are stable CDN URLs ready to post, embed, or hand to a scheduler (works great upstream of [Postiz](https://github.com/gitroomhq/postiz-agent) or any posting tool: **generate → schedule**, end to end agentic).

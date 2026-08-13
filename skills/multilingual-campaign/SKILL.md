@@ -26,7 +26,7 @@ AR=$(canvora localize $ID --language ar | head -1)
 canvora status "$AR" --json
 ```
 
-`| head -1` captures the id from `generate` and `localize` alike — same idiom both times, nothing to remember, and no `jq` needed. Keep `--wait` only where the step really is 1-2 visuals (a single-image master). Above that, poll: most harnesses kill a shell command at 120s while the conversion keeps running and the credits stay spent, and re-running after a timeout pays twice. See the `canvora` skill's "Long runs" section.
+`| head -1` captures the id from `generate` and `localize` alike — same idiom both times, nothing to remember, and no `jq` needed. Keep `--wait` only where the step really is 1-2 visuals (a single-image master). Above that, poll: most harnesses kill a shell command at 120s while the conversion carries on server-side, and re-running after a timeout starts a second, separate job. See the `canvora` skill's "Long runs" section.
 
 `localize` converts ALL visuals in the generation (10 credits per visual per language — a 6-slide deck into Spanish = 60; always confirm languages with the user before running). To convert only ONE visual out of a multi-visual generation, use `canvora edit <outputId> --prompt "Translate all visible text into Spanish" --yes` instead.
 

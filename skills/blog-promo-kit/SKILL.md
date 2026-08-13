@@ -69,9 +69,9 @@ and run `canvora credits --json` once before starting** — running dry midway
 leaves a half-assembled kit with the earlier calls already paid for.
 
 Anything producing 3+ outputs is fire-and-poll, not `--wait`: most harnesses
-kill a shell command at 120s while the generation keeps running and the credits
-stay spent, and re-running `generate` after a timeout pays twice. See the
-`canvora` skill's "Long runs" section.
+kill a shell command at 120s while the generation carries on server-side, and
+re-running `generate` starts a second, separate job. Poll `status` instead. See
+the `canvora` skill's "Long runs" section.
 
 ## Craft notes
 

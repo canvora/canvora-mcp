@@ -30,10 +30,10 @@ The flow, in MCP tools:
    brand_id, ... })` — the photo URLs go here.
 4. `get_generation({ generation_id })` to poll and collect outputs.
 
-Step 4 is a poll loop by design, so the timeout trap that bites the CLI path
+Step 4 is a poll loop by design, so the CLI's shell-timeout consideration
 doesn't apply here — but the same rule does: a generation that hasn't come back
-yet is still running and already paid for. Never fire a second
-`confirm_generation` for the same job. State the cost in the same message as
+yet is still running. Never fire a second `confirm_generation` for the same
+job; that starts a second, separate generation. State the cost in the same message as
 step 3 — 10 credits per single visual, 15 per carousel slide — announcing it
 rather than asking permission. If you chose the slide count rather than the
 user, confirm that number first.

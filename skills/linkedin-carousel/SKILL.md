@@ -57,9 +57,9 @@ canvora status "$ID" --json
 ```
 
 Both are 3+ outputs, so fire-and-poll rather than `--wait` — most harnesses
-kill a shell command at 120s while the generation runs on and the credits stay
-spent. Never re-run `generate` after a timeout; poll `status`. See the
-`canvora` skill's "Long runs" section.
+kill a shell command at 120s while the generation carries on server-side. Never
+re-run `generate` after a timeout; that starts a second, separate job. Poll
+`status`. See the `canvora` skill's "Long runs" section.
 
 ## Content shaping for LinkedIn specifically
 

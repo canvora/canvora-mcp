@@ -76,8 +76,9 @@ run (a 6-page brochure = 90), announcing it rather than asking permission. When
 the page count came from the defaults above rather than from the user, confirm
 that number with them first. Anything over 2 pages is 3+ outputs, so fire and
 poll `status` instead of `--wait`: your harness likely kills a shell command at
-120s while the pages keep rendering and the credits stay spent. Never re-run
-`generate` after a timeout. See the `canvora` skill's "Long runs" section.
+120s while the pages carry on rendering server-side. Never re-run `generate`
+after a timeout; that starts a second, separate job. See the `canvora` skill's
+"Long runs" section.
 
 ## Things that ruin documents (avoid)
 

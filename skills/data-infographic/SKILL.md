@@ -67,12 +67,12 @@ canvora generate --input "$MILESTONES" --exact --format timeline --brand $BRAND 
 
 These are all single-image formats at 10 credits each — tell the user the total
 in the same message as the run, announcing it rather than asking permission.
-`--wait` is fine at 1-2 outputs (~1.5 min each). If you batch 3 or more formats
+`--wait` is fine at 1-2 outputs. If you batch 3 or more formats
 into one call, drop `--wait`, capture the id with
 `ID=$(canvora generate ... | head -1)` and poll `canvora status "$ID" --json`
-instead — most harnesses kill a shell command at 120s while the generation runs
-on and the credits stay spent. Never re-run `generate` after a timeout. See the
-`canvora` skill's "Long runs" section.
+instead — most harnesses kill a shell command at 120s while the generation
+carries on server-side. Never re-run `generate` after a timeout; that starts a
+second, separate job. See the `canvora` skill's "Long runs" section.
 
 ## The rule specific to data: use `--exact`
 
