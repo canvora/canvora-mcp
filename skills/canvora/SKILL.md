@@ -1,23 +1,50 @@
 ---
 name: canvora
-version: 1.2.0
-description: Create on-brand visuals (social posts, carousels, decks, ads, documents) from any text, URL, or PDF via Canvora. 100+ formats, native generation in 150+ languages, per-client brand kits. Use when the user asks to create, generate, or design visual content for social media, marketing, or presentations.
+version: 1.4.0
+description: Create on-brand visuals (social posts, carousels, decks, PDFs, ads, landing-page kits, infographics) from any idea, text, URL, or PDF via Canvora. 82 formats, native generation in 150+ languages, per-client brand kits. Use when the user asks to create, generate, or design visual content for social media, marketing, presentations, or documents.
+homepage: https://canvora.ai/for-agents
+metadata: {"openclaw":{"emoji":"🎨","requires":{"bins":["canvora"],"env":["CANVORA_API_KEY"]}}}
 ---
 
 # Canvora — on-brand visuals as a shell command
 
-Canvora turns text, URLs, docs, and PDFs into finished visuals: single images
-(10 credits) and multi-slide carousels/decks (15 credits per slide) in 100+
-formats, generated natively in 150+ languages. Brand kits keep every output in
-the client's colors, fonts, logo, and tone.
+Canvora turns ideas, text, URLs, docs, and PDFs into finished visuals: single
+images (10 credits) and multi-slide carousels/decks/documents (15 credits per
+slide) across 82 formats, generated natively in 150+ languages. Brand kits keep
+every output in the client's colors, fonts, logo, and tone.
+
+This is the core skill: setup, the generate loop, credits, and refinement.
+Task-specific skills build on it — see "Companion skills" at the bottom.
 
 ## Setup (once)
 
-1. `npm install -g @canvora/cli` (Node 18+, zero dependencies; v1.2+ for localize/variations/edit)
+1. `npm install -g @canvora/cli` (Node 18+, zero dependencies; **v1.4+** for
+   `--logo`, `--cta`, `--no-text`, `--freeform`, `--landing-page`)
 2. Get an API key: canvora.ai → Integrations → API Keys (all plans, incl. Free)
 3. `export CANVORA_API_KEY=vd_...`
 
 Verify: `canvora credits --json` returns the account balance.
+
+## Before you generate: the four things that decide the output
+
+Generation costs credits and is not instant — a single image is usually about a
+minute and a half, a 10-slide deck 7–8 minutes (see "Long runs"). Get these
+right on the first call; there is no cheap retry.
+Ask the user ONLY for what you cannot infer from the conversation — never
+interrogate. In order of impact:
+
+1. **Source** — do they have content, a link, a file, or just a topic? (picks
+   `--input` / `--url` / `--file-url` / `--idea`)
+2. **Where it goes** — the platform or artifact decides the format, not the
+   other way round ("LinkedIn carousel", "a PDF one-pager", "Meta ads").
+3. **Whose brand** — if a client or company is named, look up the kit
+   (`canvora brands --json`) and pass `--brand`. Skipping this is the single
+   biggest quality drop.
+4. **Any look they already have in mind** — one line is enough ("black and
+   white, big type"). If they say nothing, do not invent art direction.
+
+Defaults that are safe when the user gives nothing: 5 slides, `--style modern`,
+2K, language auto-detected from their input.
 
 ## Creating visuals
 
@@ -39,9 +66,6 @@ canvora generate --url https://example.com/post \
 canvora generate --file-url https://example.com/report.pdf \
   --format presentation_slide --slides presentation_slide=8 --wait --json
 ```
-
-Also available: `--title "Q3 launch"` (names the generation in the dashboard)
-and `--resolution 4K` (paid plans; default 2K).
 
 The final JSON contains `generation.outputs[]`, each with a stable CDN
 `fileUrl` you can post, embed, or download.
@@ -65,12 +89,14 @@ The live catalog is the source of truth - do not guess format IDs:
 canvora formats --json
 ```
 
-Each entry has `id`, `dimensions`, `category` (social, marketing, document,
-presentation, advertising, infographic, email, landing_page), `is_carousel`,
-and a `description` that includes recommendations (e.g. the LinkedIn carousel
-marked "recommended", `pitch_deck` "for investors"). Match the user's intent
-against category + description and pick accordingly. Carousel-flagged formats
-take `--slides`.
+Each entry has `id`, `dimensions`, `category` (social, marketing, infographic,
+presentation, document, advertising, web, email, landing_page), `is_carousel`,
+and a `description`. Match the user's intent against category + description.
+Carousel-flagged formats take `--slides`.
+
+Two ID traps: landing-page formats are camelCase with a hyphen
+(`landingPage-Hero`, not `landing_page_hero`), and the multi-page PDF format is
+called `document_page` — nobody guesses that one (see the `pdf-document` skill).
 
 Combos worth knowing (these span formats, so the catalog can't tell you):
 - Announcing something: `announcement_card` + `instagram_post` + `instagram_story`
@@ -91,6 +117,7 @@ calls with 3 different ideas (not `instagram_post,instagram_post`).
 items ("5 tips", "6 formas", "7 steps"), set `--slides` to N so each item
 gets its own slide - or N+1 if you also want a cover. If you omit it, Canvora
 fits the items into 5 slides (combining or stretching as needed).
+`x_multi_image` caps at 4.
 
 ## Brand kits
 
@@ -99,19 +126,45 @@ fits the items into 5 slides (combining or stretching as needed).
 user names a client or brand, ALWAYS look up and pass their kit - it is the
 difference between on-brand output and generic output.
 
-## Styles and language
+Add `--logo` to actually place the brand logo on the visual. `--brand` alone
+applies the colors, fonts and voice but **does not** stamp the logo.
 
-`--style` sets the aesthetic. Pick from the user's tone:
-- corporate, professional, B2B -> `corporate` or `minimal`
-- friendly, consumer, lifestyle -> `playful` or `creative`
-- premium, luxury -> `elegant` or `dark`
-- loud, promotional -> `bold`
-- default / unsure -> `modern`
+## Styles, art direction, and language
+
+`--style` sets the aesthetic: `modern` (default), `minimal`, `bold`,
+`elegant`, `playful`, `corporate`, `creative`, `dark`. Pick from the user's tone:
+
+- corporate, professional, B2B → `corporate` or `minimal`
+- friendly, consumer, lifestyle → `playful` or `creative`
+- premium, luxury → `elegant` or `dark`
+- loud, promotional → `bold`
+
+**Omitting `--style` does not mean "let Canvora choose" — it pins `modern`.**
+So make a deliberate pick whenever the user's tone gives you one.
+
+**How much to art-direct.** Let Canvora own the design *execution* — layout,
+composition, per-slide imagery, color harmony. Do not write slide-by-slide
+visual instructions. But when the user states an aesthetic ("black and white,
+grey background, large type", "hand-drawn", "dark and premium"), pass it
+through in one line: it is honoured and it measurably improves the result.
+Dropping the user's stated look is a worse failure than over-specifying.
 
 Language is detected from your input automatically - a Spanish idea yields a
 Spanish carousel, natively generated (not translated). To force a specific
 language (e.g. an English brief for a Turkish audience), pass
 `--language tr` or `--language Turkish`.
+
+## The v1.4 levers
+
+| Flag | Use it when |
+|---|---|
+| `--logo` | the visual should carry the brand mark (needs `--brand`) |
+| `--cta` | a carousel/deck should end on a call-to-action slide |
+| `--no-text` | they want pure imagery: backgrounds, hero art, textures |
+| `--freeform` | they want the dimensions only, with no format-specific art direction |
+| `--landing-page` | with `--url`: read a page's sections and produce a matching visual kit (Starter+) |
+| `--project <uuid>` | group everything into one campaign |
+| `--exact` | the text must appear verbatim (quotes, taglines, legal lines) |
 
 ## Recipes for common asks
 
@@ -119,7 +172,7 @@ language (e.g. an English brief for a Turkish audience), pass
 # "Promote this blog post" - full promo set from one URL
 canvora generate --url $POST_URL \
   --format blog_header,instagram_carousel,linkedin_post --slides instagram_carousel=6 \
-  --brand $BRAND --wait --json
+  --brand $BRAND --logo --wait --json
 
 # "Weekly content in English and Spanish" - run twice, native each time
 canvora generate --idea "3 mistakes first-time founders make" --format instagram_carousel --slides instagram_carousel=4 --wait --json
@@ -129,7 +182,7 @@ canvora generate --idea "3 errores de los fundadores primerizos" --format instag
 canvora generate --file-url $PDF_URL --format presentation_slide --slides presentation_slide=8 --wait --json
 
 # "Make an ad set for this product page"
-canvora generate --url $PRODUCT_URL --format ad_square,ad_landscape,ad_portrait --brand $BRAND --wait --json
+canvora generate --url $PRODUCT_URL --format ad_square,ad_landscape,ad_portrait --brand $BRAND --cta --wait --json
 ```
 
 ## Budgeting and errors
@@ -140,16 +193,45 @@ canvora generate --url $PRODUCT_URL --format ad_square,ad_landscape,ad_portrait 
 - Failed generations refund automatically; safe to retry on exit 1 unless the
   error says the request was declined by content safety checks (those are
   terminal - do not retry).
-- `--wait` times out after 600s by default (override with `--timeout`); the
-  generation keeps running server-side and `canvora status <id>` retrieves it.
-  NEVER re-run `generate` after a timeout - that creates a NEW paid
-  generation. Poll `canvora status <id>` instead.
+- A `partial` status means some visuals were blocked or failed; the credits for
+  those are refunded automatically. Report what came back and why, don't silently
+  hand over a short carousel.
 - Rate limit: 20 generation requests/minute. For big batches, run
-  sequentially with `--wait` rather than firing them all at once.
+  sequentially rather than firing them all at once.
 - Free-plan outputs carry a watermark; paid plans export clean. If the user
   asks why there is a watermark, that is the reason.
 - Everything you create also lands in the user's Canvora dashboard for review
   and editing - tell the user where to find it.
+
+## Long runs: your own command timeout is the real limit
+
+`--wait` polls until done, up to 600s (`--timeout` to change). But the binding
+constraint is usually **your harness's shell timeout, not Canvora's** - many
+agent runtimes kill a shell command at 120s by default. Typical wall-clock:
+single image ~1.5 min, 5 slides ~4-5 min, 10 slides ~7-8 min, with a slow tail
+past 11 min.
+
+- **1-2 outputs:** `--wait` is fine if you can raise your shell timeout to 300s.
+- **3+ outputs:** do NOT use `--wait`. Fire the generation, keep the returned
+  `generation.id`, and poll `canvora status <id> --json` in separate short
+  commands until `status` is `completed`, `partial`, or `failed`.
+- A killed shell does NOT cancel anything - the generation completes server-side
+  and the credits are already spent. `canvora status <id>` always retrieves it.
+- **NEVER re-run `generate` after a timeout.** That creates a second paid
+  generation. Poll `status` instead. This is the single most expensive mistake
+  an agent can make here.
+
+```bash
+# 3+ outputs: start it, then poll. Without --json the first stdout line is the
+# bare generation id, so this needs no jq (progress notes go to stderr).
+ID=$(canvora generate --idea "..." --format pitch_deck --slides pitch_deck=10 | head -1)
+canvora status "$ID" --json  # repeat every ~30s until completed
+```
+
+Use `| head -1` rather than parsing `--json` for the id: it works identically
+for `generate`, `localize` and `variations`, whereas the JSON shape differs
+between them (`generate` nests it at `.generation.id`, the other two return
+`.generationId`). Poll with `--json` as usual once you have the id.
 
 ## Delivering carousels: slide order matters
 
@@ -160,21 +242,30 @@ outputs can complete out of order, and a scrambled carousel ruins the story.
 ## Refining existing visuals (NEVER regenerate from scratch)
 
 When the user wants to change something about a visual you already made,
-regenerating loses the design and costs full credits. Use these instead
-(each costs the 10-credit edit rate per visual; they need the Visual Editor
-feature - Starter plan or an active Campaign Pack; a 403 means the plan
-lacks it, not an auth problem):
+regenerating loses the design and costs full credits. Use these instead.
+The rates differ per operation - do not assume one number:
+
+| Operation | Credits |
+|---|---|
+| `edit` one visual | **3** |
+| `localize` per visual, per language | 10 |
+| `variations` of a single-image format | 10 per new image |
+| `variations` of a carousel/deck | **15 per slide** |
+
+Editing is deliberately the cheap path - reach for it first. `localize` and
+`variations` need the Visual Editor feature (Starter plan or an active
+Campaign Pack); a 403 there means the plan lacks it, not an auth problem.
 
 ```bash
 # Same design, different language - the layout survives, only text changes
 canvora localize <generationId> --language es --wait --json
 
 # Fresh takes on the same generation. NOTE: --count is PER OUTPUT -
-# count 2 on a 5-slide carousel makes 10 new images (100 credits).
+# count 2 on a 5-slide carousel = 10 new images at 15 each = 150 credits.
 canvora variations <generationId> --count 2 --wait --json
 
-# Natural-language edit of ONE output. Without --yes it prints Canvora's
-# interpretation of your instruction for confirmation; add --yes to execute.
+# Natural-language edit of ONE output (3 credits). Without --yes it prints
+# Canvora's interpretation of your instruction for confirmation.
 canvora edit <outputId> --prompt "make the headline bigger" --yes --json
 ```
 
@@ -184,11 +275,19 @@ Exact wording: when the user's text must appear verbatim (quotes, taglines,
 slogans), generate with `--input "the exact text" --exact` - this disables
 rewording.
 
-## What the CLI does NOT do (yet)
+## What needs the MCP server instead of the CLI
 
-PDF/PPTX/ZIP export is not a CLI command - point the user to their Canvora
-dashboard, or to the Canvora MCP server (https://api.canvora.ai/mcp) which
-exposes export as a tool for MCP-capable agents.
+The remote MCP server (`https://api.canvora.ai/mcp`) exposes capabilities the
+CLI does not. If the user is on an MCP-capable client, use these tools:
+
+- `export_visuals` — PDF / PPTX / ZIP export of a generation
+- `upload_photo` + `confirm_generation(embedding_photos)` — put the user's own
+  product or team photos INTO the design (see the `product-photo-visuals` skill)
+- `get_edit_history` / `revert_edit` — version history, free revert
+- `convert_image` — JPG/WebP/PNG conversion
+- `chat` / `confirm_generation` — the conversational planning flow
+
+CLI-only users: point them at their Canvora dashboard for export.
 
 ## Other commands
 
@@ -196,3 +295,21 @@ exposes export as a tool for MCP-capable agents.
 canvora status <generationId> --json      # progress + output URLs
 canvora download <generationId> --dir ./  # save files locally
 ```
+
+## Companion skills
+
+Load the one that matches the job — each assumes this skill for setup:
+
+| Skill | For |
+|---|---|
+| `instagram-carousel` | Instagram carousels / swipe posts |
+| `linkedin-carousel` | LinkedIn document carousels |
+| `pitch-deck` | presentations, pitch/sales/training decks, doc → deck |
+| `pdf-document` | multi-page PDFs: brochures, reports, one-pagers, menus |
+| `landing-page-visuals` | a whole landing page's visual kit from its URL |
+| `ad-campaign` | paid social + display ad sets |
+| `blog-promo-kit` | blog header, OG image, and promo set from one post |
+| `data-infographic` | process flows, comparisons, timelines, stat cards |
+| `multilingual-campaign` | one campaign, many languages |
+| `product-photo-visuals` | designs built around the user's own photos (MCP) |
+| `visual-refresh` | fixing, varying, and versioning what already exists |

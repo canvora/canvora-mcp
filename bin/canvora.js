@@ -22,10 +22,14 @@ process.stderr.on('error', (e) => { if (e.code === 'EPIPE') process.exit(0); thr
 
 const fs = require('fs');
 const path = require('path');
-const VERSION = '1.2.0';
+const VERSION = '1.4.0';
 const API_URL = (process.env.CANVORA_API_URL || 'https://api.canvora.ai').replace(/\/+$/, '');
 const API_KEY = process.env.CANVORA_API_KEY || '';
 const REQUEST_TIMEOUT_MS = 60000;
+// A confirmed edit renders an image inline (the endpoint is synchronous), which routinely
+// outruns 60s. Without this the CLI aborts a request the user has already been charged for
+// and that succeeds server-side moments later.
+const EDIT_TIMEOUT_MS = 300000;
 
 // ---------------------------------------------------------------------------
 // arg parsing (tiny, no deps): flags may be --k v, --k=v, or boolean
@@ -85,9 +89,9 @@ function authHeaders() {
     : { Authorization: `Bearer ${API_KEY}` };
 }
 
-async function api(pathname, { method = 'GET', body } = {}) {
+async function api(pathname, { method = 'GET', body, timeoutMs = REQUEST_TIMEOUT_MS } = {}) {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
   let res;
   try {
     res = await fetch(`${API_URL}${pathname}`, {
@@ -102,7 +106,7 @@ async function api(pathname, { method = 'GET', body } = {}) {
     });
   } catch (e) {
     clearTimeout(timer);
-    if (e.name === 'AbortError') throw new Error(`request timed out after ${REQUEST_TIMEOUT_MS / 1000}s: ${method} ${pathname}`);
+    if (e.name === 'AbortError') throw new Error(`request timed out after ${timeoutMs / 1000}s: ${method} ${pathname}`);
     throw new Error(`network error: ${e.message}`);
   }
   clearTimeout(timer);
@@ -173,7 +177,11 @@ function parseSlides(flags) {
 async function cmdGenerate(flags) {
   requireKey();
   const formats = asArray(flags.format).flatMap((f) => String(f).split(',')).map((s) => s.trim()).filter(Boolean);
-  if (!formats.length) fail('at least one --format is required (see: canvora formats)', 2);
+  // Landing-page mode derives its own format list from the page's sections, so
+  // --format is optional there (and ignored by the server). Everywhere else it
+  // is the one required flag.
+  const isLandingPage = !!flags['landing-page'];
+  if (!formats.length && !isLandingPage) fail('at least one --format is required (see: canvora formats)', 2);
 
   const body = { outputFormats: formats };
   if (flags.url) { body.inputType = 'url'; body.inputUrl = String(flags.url); }
@@ -199,6 +207,19 @@ async function cmdGenerate(flags) {
   if (flags.language) body.language = String(flags.language);
   if (flags.exact) body.useExactContent = true;
   if (flags.workspace) body.workspaceId = String(flags.workspace);
+
+  // v1.4: the remaining pipeline levers the API has always accepted but the CLI
+  // never sent, so agents were stuck with the defaults (no logo, no CTA, text on,
+  // format guidance on).
+  if (flags.logo) body.includeLogo = true;
+  if (flags.cta) body.includeCta = true;
+  if (flags['no-text']) body.noText = true;
+  if (flags.freeform) body.isFreeform = true;
+  if (flags.project) body.projectId = String(flags.project);
+  if (isLandingPage) {
+    if (body.inputType !== 'url') fail('--landing-page requires --url <page-url> (the page it reads sections from)', 2);
+    body.mode = 'landing_page';
+  }
 
   const created = await api('/api/generations', { method: 'POST', body });
   const gen = created.generation;
@@ -280,7 +301,8 @@ async function cmdEdit(flags, outputId) {
   if (flags.confirm && typeof flags.confirm === 'string') {
     const done = await api('/api/images/edit', {
       method: 'POST',
-      body: { outputId, prompt, confirmedInstruction: String(flags.confirm) }
+      body: { outputId, prompt, confirmedInstruction: String(flags.confirm) },
+      timeoutMs: EDIT_TIMEOUT_MS
     });
     return emitEditResult(done, flags);
   }
@@ -303,7 +325,8 @@ async function cmdEdit(flags, outputId) {
     // Step 2: auto-confirm with the previewed interpretation
     const done = await api('/api/images/edit', {
       method: 'POST',
-      body: { outputId, prompt, confirmedInstruction: first.preview }
+      body: { outputId, prompt, confirmedInstruction: first.preview },
+      timeoutMs: EDIT_TIMEOUT_MS
     });
     return emitEditResult(done, flags);
   }
@@ -378,6 +401,13 @@ commands:
                                     [--resolution 2K|4K] [--title <t>]
                                     [--language <code-or-name>]  (default: matches input language)
                                     [--exact]  (use --input text verbatim, no rewording - quotes, taglines)
+                                    [--logo]   (place the brand kit's logo on the visual; needs --brand)
+                                    [--cta]    (end a carousel/deck on a call-to-action slide)
+                                    [--no-text]  (pure visual, no typography - backgrounds, hero imagery)
+                                    [--freeform] (ignore format-specific art direction, use dimensions only)
+                                    [--landing-page]  (with --url: read the page's sections and produce a
+                                                       matching landingPage-* visual kit; Starter+ plan)
+                                    [--project <uuid>] (group into a project/campaign)
                                     [--workspace <uuid>]  (bill a team workspace pool)
                                     [--wait [--timeout 600] [--poll 5]]
   localize    same design, new language
