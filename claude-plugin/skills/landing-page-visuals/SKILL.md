@@ -37,7 +37,7 @@ they only wanted a hero, settle that first.
 Usually just: **the URL** and **the brand kit**. Then two judgement calls:
 
 1. **Is the page live and public?** The page has to be publicly fetchable;
-   staging behind auth, localhost and password walls won't work. Ask for the
+   staging sites, localhost and pages behind a login won't work. Ask for the
    public URL.
 2. **Which sections?** Look at what the page actually has. Hero and CTA are
    almost always worth it; add Feature, Process, Stats, Testimonial, Comparison
@@ -45,16 +45,16 @@ Usually just: **the URL** and **the brand kit**. Then two judgement calls:
    and logo walls are not visual sections; skip them.
 
 Language is taken from the site itself, so a Spanish page yields Spanish
-visuals without you passing anything.
+visuals without you setting anything.
 
 ## The canonical runs
 
 `chat` messages:
 
-> Create a landing-page hero (landingPage-Hero) for https://example.com, using
+> Create a landing-page hero (landingPage-Hero) for [the page URL], using
 > our brand kit.
 
-> From https://example.com, create landing-page visuals for its sections:
+> From [the page URL], create landing-page visuals for its sections:
 > landingPage-Hero, landingPage-Feature, landingPage-Process,
 > landingPage-Testimonial and landingPage-CTA.
 

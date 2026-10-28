@@ -16,8 +16,8 @@ refinement. Task-specific skills build on it (see "Companion skills" at the bott
 ## Setup
 
 This plugin includes the Canvora connector. The first time a Canvora tool runs,
-the user signs in with their Canvora account (OAuth). A free account at
-canvora.ai includes free credits; no card and no API key are needed.
+the user signs in with their Canvora account. A free account at canvora.ai
+includes free credits; no card is needed.
 
 ## Before you generate: the four things that decide the output
 
@@ -47,7 +47,7 @@ Defaults that are safe when the user gives nothing: 5 slides, `modern` style,
    conversation is stateful; keep the `conversation_id` for follow-ups.
 2. **Show the plan to the user** and wait for their go-ahead. Adjust by sending
    another `chat` message in the same conversation.
-3. **`confirm_generation`** with the `conversation_id`. Pass overrides only for
+3. **`confirm_generation`** with the `conversation_id`. Add overrides only for
    what the plan got wrong or left out (see the table below). It returns a
    generation ID immediately.
 4. **`get_generation`** with that ID until `status` is `completed`, `partial`
@@ -124,13 +124,13 @@ Pick the style from the user's tone:
 **How much to art-direct.** Let Canvora own the design execution: layout,
 composition, per-slide imagery, color harmony. Do not write slide-by-slide
 visual instructions. But when the user states an aesthetic ("black and white,
-grey background, large type", "hand-drawn"), pass it through in one line: it is
+grey background, large type", "hand-drawn"), carry it through in one line: it is
 honoured, and dropping the user's stated look is a worse failure than
 over-specifying.
 
 Language comes from the brief: a Spanish brief yields a natively Spanish visual
 (designed, not translated). To target another language, say so in `chat` or
-pass `language` on confirm.
+set `language` on confirm.
 
 ## Credits, plans and errors
 
@@ -144,7 +144,7 @@ pass `language` on confirm.
   a short carousel.
 - Failed generations refund automatically. A request declined by content
   safety checks is final; don't retry it.
-- A 403 with a plan message is a plan limit, not an auth problem. Pass on the
+- A 403 with a plan message is a plan limit, not a sign-in problem. Share the
   message and the pricing link; don't retry.
 - Free-plan outputs carry a watermark; paid plans export clean.
 - Everything created is saved in the user's Canvora account (canvora.ai) for
@@ -175,7 +175,7 @@ Regenerating loses the design and costs full price. Use these instead:
 it returns; then call again with `confirmed: true` and the
 `confirmed_instruction`. Edits that change what the image depicts (the subject,
 people, products, scene) aren't available in this connector and come back
-declined with a link to the Canvora editor; pass that link on.
+declined with a link to the Canvora editor; share that link.
 
 `localize_generation` and `create_variation` need the Visual Editor feature
 (Starter plan or a Campaign Pack); a 403 there is the plan.

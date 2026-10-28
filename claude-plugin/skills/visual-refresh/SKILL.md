@@ -50,7 +50,7 @@ lists each output, numbered, with its format and image URL.
   comes back asking for clarification.
 - Changes to what the image depicts (the subject, people, products, the scene)
   aren't available through this connector; the edit comes back with a link to
-  the Canvora editor. Pass the link on rather than trying another route.
+  the Canvora editor. Share the link rather than trying another route.
 
 ## Whole-generation operations
 
@@ -66,7 +66,7 @@ yourself, confirm that number first. Both return new generation IDs; poll them
 with `get_generation`.
 
 Both need the Visual Editor feature (Starter plan or an active Campaign Pack).
-A 403 is a plan limit, not an auth failure: say that, don't retry.
+A 403 is a plan limit, not a sign-in problem: say that, don't retry.
 
 ## Versioning
 

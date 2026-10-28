@@ -36,7 +36,7 @@ with `document_page` in the same request.
    language.
 2. **How many pages?** If unknown: brochure 4, company profile 6, report 8,
    menu 2. Max 10 per run; for longer, run consecutive generations.
-3. **Source?** The user's own copy or a document's text (pass it in full), a
+3. **Source?** The user's own copy or a document's text (include it in full), a
    public URL, or a topic.
 4. **Brand kit?** Documents are where an off-brand result is most obvious:
    `brand_id` + `embed_logo: true`.
@@ -66,7 +66,7 @@ that number first.
 ## Things that ruin documents (avoid)
 
 - **Paraphrasing the source.** Documents carry facts: prices, names, figures,
-  legal lines. Pass the text in full, and set `use_exact_content` whenever the
+  legal lines. Give the text in full, and set `use_exact_content` whenever the
   wording is not yours to change.
 - **Treating pages like slides.** Don't ask for a "hook" page. Documents open
   with a title or cover and proceed in reading order.
@@ -84,7 +84,7 @@ in order.
 ## Quality checklist
 
 - [ ] `document_page` with the page count (not separate runs per page)
-- [ ] Source passed in full; `use_exact_content` when facts/prices/legal text must survive
+- [ ] Source given in full; `use_exact_content` when facts/prices/legal text must survive
 - [ ] Brand kit + logo applied
 - [ ] `include_cta` on anything persuasive
 - [ ] Delivered as an actual PDF via `export_visuals`

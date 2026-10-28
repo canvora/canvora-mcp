@@ -29,7 +29,7 @@ values or illustration details; over-specified briefs fight the tuned format
 pipeline and produce worse, samey output.
 
 **But do carry the user's stated look.** If they said "black and white with big
-type" or "hand-drawn", pass it through as one line of overall direction. It is
+type" or "hand-drawn", carry it through as one line of overall direction. It is
 honoured, and dropping it is the more common and more damaging mistake. The
 line is: *overall aesthetic = yes, slide-by-slide instructions = no.*
 

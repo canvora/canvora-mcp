@@ -6,7 +6,7 @@ description: Build presentation decks with Canvora — pitch decks, sales decks,
 # Decks and presentations
 
 Deck formats run through Canvora's **structured slide pipeline**: one planning
-pass builds the narrative arc and a shared design system, then every slide is
+step builds the narrative arc and a shared design system, then every slide is
 rendered against it. That is why a deck holds together where N separate images
 would not. Your job is the narrative input and the format choice; the pipeline
 does the rest. The generate loop and credits: see the `canvora` skill.
@@ -30,14 +30,14 @@ number with them; when they said "10 slides", just run it.
 ## Intake: three questions, maximum
 
 1. **What's the source?** A link (put the URL in the `chat` message), content
-   they wrote or a document's text in the conversation (pass it in full), or
+   they wrote or a document's text in the conversation (include it in full), or
    just the pitch in their head (describe it).
 2. **How many slides?** If they don't know, use the audience: pitch 10,
    sales 8, training as many as there are steps, general 8. Cap is 10 per run.
 3. **Whose brand?** `list_brands` → `brand_id`, plus `embed_logo: true`: decks
    are the one place a logo is expected.
 
-If they gave you a document, do NOT summarise it into a vague idea. Pass its
+If they gave you a document, do NOT summarise it into a vague idea. Give its
 content as the source (or its public URL) so the numbers, names and structure
 survive.
 
@@ -52,7 +52,7 @@ survive.
 > problem, market size, product, traction, team, ask. Corporate style, close on
 > the ask.
 
-> Make an 8-slide sales deck (sales_deck) from https://example.com/product, with a CTA.
+> Make an 8-slide sales deck (sales_deck) from [the product page URL], with a CTA.
 
 Then `confirm_generation` with `brand_id`, `embed_logo: true` and, for
 pitch/sales decks, `include_cta: true`; poll `get_generation`.
@@ -69,7 +69,7 @@ pitch/sales decks, `include_cta: true`; poll `get_generation`.
 - **`visual_style`:** investors/enterprise → `corporate` or `minimal`; product
   launches → `bold`; premium/brand-led → `elegant`.
 - **Don't art-direct slide by slide.** But if the user has a stated look or an
-  existing template aesthetic, pass it as one line.
+  existing template aesthetic, give it as one line.
 
 ## Delivering a deck
 
@@ -81,7 +81,7 @@ pitch/sales decks, `include_cta: true`; poll `get_generation`.
 
 ## Quality checklist
 
-- [ ] Source passed in full (content or URL), not paraphrased
+- [ ] Source given in full (content or URL), not paraphrased
 - [ ] Slide count matches the narrative beats
 - [ ] Brand kit + `embed_logo` applied when a kit exists
 - [ ] `include_cta` on pitch/sales, off on training

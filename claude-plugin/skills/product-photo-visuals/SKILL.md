@@ -16,7 +16,7 @@ The generate loop and credits: see the `canvora` skill.
 
 Pick the first route that fits:
 
-1. **The photo is already online** (their website, a product page, a CDN): pass
+1. **The photo is already online** (their website, a product page, a CDN): put
    its public `https://` URL straight into `embedding_photos` on
    `confirm_generation`. Nothing to upload.
 2. **The photo is a file you can read** (Claude Code, a local folder): shrink it

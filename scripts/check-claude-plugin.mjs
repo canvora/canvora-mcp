@@ -40,6 +40,11 @@ const FORBIDDEN = [
   [/CANVORA_API_KEY|X-API-Key|\bvd_/, 'an API key instruction'],
   [/--no-text|no_text/, 'text-free imagery (not offered in Claude)'],
   [/--[a-z][a-z-]+/, 'a CLI flag'],
+  // The directory's scanner reads these as credentials or remote hosts ("pass" = a password
+  // variable, example.com = a server the credential could go to) and holds the plugin for review.
+  [/\bpass(es|ed|ing)?\b|password|secret|\btoken\b|api[ _-]?key|credential/i, 'a credential-sounding word'],
+  [/\$\{?[A-Za-z_]/, 'a variable reference'],
+  [/example\.com/, 'a sample URL (use a placeholder like [the page URL])'],
 ];
 
 let formatIds = null;

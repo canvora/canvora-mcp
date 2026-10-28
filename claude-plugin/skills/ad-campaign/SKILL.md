@@ -1,6 +1,6 @@
 ---
 name: ad-campaign
-description: Produce paid ad creative sets with Canvora — Meta, Instagram, LinkedIn, Google Display and banner placements in one pass, with variants for testing. Use when the user wants ads, ad creative, paid social assets, display banners, or a campaign creative set.
+description: Produce paid ad creative sets with Canvora — Meta, Instagram, LinkedIn, Google Display and banner placements in one go, with variants for testing. Use when the user wants ads, ad creative, paid social assets, display banners, or a campaign creative set.
 ---
 
 # Ad creative sets
@@ -43,7 +43,7 @@ number of angles yourself, confirm that number.
 `chat` messages:
 
 > Create an ad set (ad_square, ad_portrait, ad_landscape) from
-> https://store.example.com/product. Bold style, with a CTA, using our brand kit.
+> [the product page URL]. Bold style, with a CTA, using our brand kit.
 
 > Create ad_square and ad_landscape ads: "Book a free 30-minute logistics
 > audit", for e-commerce ops managers losing money on returns.
@@ -72,7 +72,7 @@ Run angle generations one after another, not all at once.
 - **Text-light wins on paid social.** Keep the offer to one line in the brief;
   platforms penalise cluttered creative and so does attention.
 - **`use_exact_content`** when legal or pricing copy must appear verbatim.
-- Don't art-direct per placement. Do pass a stated brand look once.
+- Don't art-direct per placement. Do carry a stated brand look once.
 
 ## Delivery
 

@@ -43,12 +43,12 @@ for "a blog image", ask whether they have an OG card; usually they don't.
 
 `chat` messages:
 
-> From https://example.com/blog/post, create blog_header, og_image,
+> From [the article URL], create blog_header, og_image,
 > linkedin_post and a 6-slide instagram_carousel_portrait, using our brand kit.
 
-> From https://example.com/blog/post, create blog_featured and og_image.
+> From [the article URL], create blog_featured and og_image.
 
-> From https://example.com/blog/post, create linkedin_post, twitter_post and a
+> From [the article URL], create linkedin_post, twitter_post and a
 > quote_card.
 
 Then `confirm_generation` with `brand_id` and poll `get_generation`.

@@ -42,7 +42,7 @@ list is the thing you confirm, not the price).
   stay in the source language; say so in the brief ("keep 'Acme' and
   '#AcmeLaunch' untranslated").
 - **Language precision at conversion time:** "Brazilian Portuguese" vs
-  "Portuguese"; Simplified vs Traditional Chinese. Pass what the user's market
+  "Portuguese"; Simplified vs Traditional Chinese. Use what the user's market
   actually means.
 - **RTL check:** Arabic/Hebrew/Urdu conversions handle text direction
   automatically; still check reading order on multi-column layouts before
