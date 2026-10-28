@@ -3,7 +3,6 @@ name: visual-refresh
 version: 1.0.0
 description: Change, fix, re-roll or version visuals that Canvora already produced — targeted edits, variations, localization, edit history and revert — without paying to regenerate. Use when the user wants to tweak, fix, restyle, translate or undo an existing visual.
 homepage: https://canvora.ai/for-agents
-metadata: {"openclaw":{"emoji":"🩹","requires":{"bins":["canvora"],"env":["CANVORA_API_KEY"]}}}
 ---
 
 # Refining what already exists

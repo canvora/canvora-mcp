@@ -3,7 +3,6 @@ name: pitch-deck
 version: 1.0.0
 description: Build presentation decks with Canvora — pitch decks, sales decks, training and webinar slides, or a whole PDF/DOCX report turned into slides. Use when the user wants a presentation, deck, slide set, investor pitch, sales enablement slides, or asks to turn a document into slides.
 homepage: https://canvora.ai/for-agents
-metadata: {"openclaw":{"emoji":"📊","requires":{"bins":["canvora"],"env":["CANVORA_API_KEY"]}}}
 ---
 
 # Decks and presentations

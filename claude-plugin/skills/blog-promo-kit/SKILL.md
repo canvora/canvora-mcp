@@ -3,7 +3,6 @@ name: blog-promo-kit
 version: 1.0.0
 description: Turn one published article URL into its full visual kit with Canvora — blog header, Open Graph share card, and the social promo set that distributes it. Use when the user publishes a blog post, wants a featured image, an OG image, or asks how to promote an article.
 homepage: https://canvora.ai/for-agents
-metadata: {"openclaw":{"emoji":"📰","requires":{"bins":["canvora"],"env":["CANVORA_API_KEY"]}}}
 ---
 
 # Blog and article promo kits

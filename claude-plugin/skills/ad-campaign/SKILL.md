@@ -3,7 +3,6 @@ name: ad-campaign
 version: 1.0.0
 description: Produce paid ad creative sets with Canvora — Meta, Instagram, LinkedIn, Google Display and banner placements in one pass, with variants for testing. Use when the user wants ads, ad creative, paid social assets, display banners, or a campaign creative set.
 homepage: https://canvora.ai/for-agents
-metadata: {"openclaw":{"emoji":"📣","requires":{"bins":["canvora"],"env":["CANVORA_API_KEY"]}}}
 ---
 
 # Ad creative sets

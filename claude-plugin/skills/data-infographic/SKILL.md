@@ -3,7 +3,6 @@ name: data-infographic
 version: 1.0.0
 description: Turn data, comparisons, processes and timelines into explanatory visuals with Canvora — process flows, comparison charts, timelines, stat cards, checklists and long-form infographics. Use when the user has numbers, steps, a before/after, a roadmap, or asks for an infographic or diagram.
 homepage: https://canvora.ai/for-agents
-metadata: {"openclaw":{"emoji":"📈","requires":{"bins":["canvora"],"env":["CANVORA_API_KEY"]}}}
 ---
 
 # Infographics and explanatory visuals

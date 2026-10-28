@@ -3,7 +3,6 @@ name: instagram-carousel
 version: 1.1.0
 description: Create high-performing Instagram carousels with Canvora — right format, right slide count, hook-first content shaping, and the correct refine workflow. Use when the user wants an Instagram carousel, multi-slide IG post, swipe post, or educational/listicle content for Instagram.
 homepage: https://canvora.ai/for-agents
-metadata: {"openclaw":{"emoji":"🎠","requires":{"bins":["canvora"],"env":["CANVORA_API_KEY"]}}}
 ---
 
 # Instagram Carousel Creation

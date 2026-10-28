@@ -26,7 +26,17 @@ const EDITS = [
   ['landing-page-visuals', '\n# Pure imagery with no typography baked in (devs adding their own copy in HTML)\ncanvora generate --url $URL --format landingPage-Hero --no-text --wait --json\n', '\n'],
   ['landing-page-visuals', '\n`--no-text` is the flag web teams want and never find: it produces the artwork\nwithout text, so the copy stays in the DOM where it belongs.\n', ''],
   ['landing-page-visuals', '- [ ] `--no-text` offered when the visuals go into a real HTML page\n', ''],
+  // The plugin keeps the API key in its own settings (masked, secure storage) and exports it for
+  // the session, so the skill never asks the user to put a key in their shell or the chat.
+  ['canvora', '2. Get an API key: canvora.ai → Integrations → API Keys (all plans, incl. Free)\n3. `export CANVORA_API_KEY=vd_...`\n',
+    '2. Get an API key: canvora.ai → Integrations → API Keys (all plans, incl. Free)\n'
+    + '3. Save it in this plugin\'s settings: `/plugin configure canvora@canvora`. It is stored\n'
+    + '   in secure storage and given to the CLI as `CANVORA_API_KEY` from the next session on.\n'
+    + '   Never ask the user to paste the key into the chat. No key? The bundled Canvora\n'
+    + '   connector signs in with OAuth: see "What needs the MCP server instead of the CLI".\n'],
 ];
+// OpenClaw-only frontmatter (it declares CANVORA_API_KEY as a machine env requirement).
+const OPENCLAW_META = /^metadata: \{"openclaw".*\}\n/m;
 
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
@@ -39,7 +49,10 @@ for (const skill of readdirSync(SRC)) {
     if (!text.includes(from)) problems.push(`${s}: text to remove not found: ${JSON.stringify(from.slice(0, 60))}`);
     text = text.replace(from, to);
   }
+  if (!OPENCLAW_META.test(text)) problems.push(`${skill}: OpenClaw metadata line not found`);
+  text = text.replace(OPENCLAW_META, '');
   if (/no-text|no_text/.test(text)) problems.push(`${skill}: still mentions --no-text`);
+  if (/export CANVORA_API_KEY/.test(text)) problems.push(`${skill}: still tells the user to export the key`);
   writeFileSync(file, text);
 }
 if (problems.length) {

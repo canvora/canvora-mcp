@@ -3,7 +3,6 @@ name: pdf-document
 version: 1.0.0
 description: Create multi-page PDF documents with Canvora — brochures, reports, one-pagers, company profiles, proposals, menus, catalogs, ebooks, worksheets and cheat sheets. Use when the user wants a PDF, a printable document, a brochure, a lead magnet, or anything paginated rather than a social post.
 homepage: https://canvora.ai/for-agents
-metadata: {"openclaw":{"emoji":"📄","requires":{"bins":["canvora"],"env":["CANVORA_API_KEY"]}}}
 ---
 
 # Multi-page documents and PDFs

@@ -3,7 +3,6 @@ name: multilingual-campaign
 version: 1.0.1
 description: Turn one Canvora generation into a native multilingual campaign — generate once, convert per language with layout-preserving localization. 150+ languages including RTL (Arabic, Hebrew, Urdu) and CJK. Use when the user wants social visuals in multiple languages, localized campaigns, translated posts, or content for LATAM/MENA/European/Asian markets.
 homepage: https://canvora.ai/for-agents
-metadata: {"openclaw":{"emoji":"🌍","requires":{"bins":["canvora"],"env":["CANVORA_API_KEY"]}}}
 ---
 
 # Multilingual Campaign Creation

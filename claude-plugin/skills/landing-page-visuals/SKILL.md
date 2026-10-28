@@ -3,7 +3,6 @@ name: landing-page-visuals
 version: 1.0.0
 description: Generate a complete visual kit for a landing page from its URL — hero, features, process, stats, testimonials, comparison, timeline and CTA imagery, matched to the page's own sections. Use when the user wants landing page images, website section visuals, hero images, or asks to "make visuals for my site".
 homepage: https://canvora.ai/for-agents
-metadata: {"openclaw":{"emoji":"🧩","requires":{"bins":["canvora"],"env":["CANVORA_API_KEY"]}}}
 ---
 
 # Landing page visual kits

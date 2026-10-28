@@ -3,7 +3,6 @@ name: canvora
 version: 1.4.0
 description: Create on-brand visuals (social posts, carousels, decks, PDFs, ads, landing-page kits, infographics) from any idea, text, URL, or PDF via Canvora. 100+ formats, native generation in 150+ languages, per-client brand kits. Use when the user asks to create, generate, or design visual content for social media, marketing, presentations, or documents.
 homepage: https://canvora.ai/for-agents
-metadata: {"openclaw":{"emoji":"🎨","requires":{"bins":["canvora"],"env":["CANVORA_API_KEY"]}}}
 ---
 
 # Canvora — on-brand visuals as a shell command
@@ -21,7 +20,10 @@ Task-specific skills build on it — see "Companion skills" at the bottom.
 1. `npm install -g @canvora/cli` (Node 18+, zero dependencies; **v1.4+** for
    `--logo`, `--cta`, `--freeform`, `--landing-page`)
 2. Get an API key: canvora.ai → Integrations → API Keys (all plans, incl. Free)
-3. `export CANVORA_API_KEY=vd_...`
+3. Save it in this plugin's settings: `/plugin configure canvora@canvora`. It is stored
+   in secure storage and given to the CLI as `CANVORA_API_KEY` from the next session on.
+   Never ask the user to paste the key into the chat. No key? The bundled Canvora
+   connector signs in with OAuth: see "What needs the MCP server instead of the CLI".
 
 Verify: `canvora credits --json` returns the account balance.
 

@@ -3,7 +3,6 @@ name: product-photo-visuals
 version: 1.0.0
 description: Build Canvora visuals around the user's OWN photos — real product shots, team headshots, venue or event photos embedded into the design instead of generic stock imagery. Use when the user has photos to include, wants their actual product shown, or says the visuals must feature their real people or place.
 homepage: https://canvora.ai/for-agents
-metadata: {"openclaw":{"emoji":"📸","requires":{"env":["CANVORA_API_KEY"]}}}
 ---
 
 # Visuals built around the user's own photos

@@ -3,7 +3,6 @@ name: linkedin-carousel
 version: 1.0.0
 description: Create LinkedIn document carousels and post visuals with Canvora — correct aspect ratio, safe zones for LinkedIn's UI chrome, B2B content shaping. Use when the user wants a LinkedIn carousel, document post, swipe post for LinkedIn, or B2B thought-leadership visuals.
 homepage: https://canvora.ai/for-agents
-metadata: {"openclaw":{"emoji":"💼","requires":{"bins":["canvora"],"env":["CANVORA_API_KEY"]}}}
 ---
 
 # LinkedIn carousels and post visuals
