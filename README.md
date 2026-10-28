@@ -112,6 +112,7 @@ One remote server, OAuth sign-in, 16 tools your agent discovers on connect:
 |---|---|
 | **Server URL** | `https://api.canvora.ai/mcp` (streamable HTTP) |
 | **Claude** | Settings → Connectors → Add custom connector → OAuth Client ID `claude_mcp` |
+| **Claude Code plugin** | `/plugin marketplace add canvora/canvora-mcp` then `/plugin install canvora@canvora` (connector + all 12 skills) |
 | **ChatGPT** | Apps → search **Canvora** → Connect, then start a message with `@Canvora` |
 | **Registry** | `ai.canvora/canvora` on the [official MCP Registry](https://registry.modelcontextprotocol.io) — also on [Glama](https://glama.ai/mcp/servers/canvora/canvora-mcp), [Smithery](https://smithery.ai/servers/canvora-ai/canvora-ai), [mcpservers.org](https://mcpservers.org/servers/canvora/canvora-mcp) |
 

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "canvora": {
+      "type": "http",
+      "url": "https://api.canvora.ai/mcp"
+    }
+  }
+}

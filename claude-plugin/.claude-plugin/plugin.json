@@ -1,0 +1,14 @@
+{
+  "name": "canvora",
+  "version": "1.4.1",
+  "description": "Turn any idea, URL, or document into on-brand marketing visuals: posts, carousels, ads, and slides in 100+ formats and 150+ languages. Bundles the Canvora connector with 12 task skills (carousels, pitch decks, PDFs, ad sets, landing-page kits, localization).",
+  "author": {
+    "name": "Canvora",
+    "email": "support@canvora.ai",
+    "url": "https://canvora.ai/"
+  },
+  "homepage": "https://canvora.ai/for-agents",
+  "repository": "https://github.com/canvora/canvora-mcp",
+  "license": "MIT",
+  "keywords": ["design", "marketing", "social-media", "carousel", "presentation", "branding", "localization", "visuals"]
+}

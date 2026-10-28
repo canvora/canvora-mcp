@@ -1,0 +1,15 @@
+{
+  "name": "canvora",
+  "description": "Canvora: on-brand marketing visuals for Claude",
+  "owner": {
+    "name": "Zynova Technologies OÜ",
+    "email": "support@canvora.ai"
+  },
+  "plugins": [
+    {
+      "name": "canvora",
+      "source": "./claude-plugin",
+      "description": "On-brand posts, carousels, ads, and slides in 100+ formats and 150+ languages: the Canvora connector plus 12 task skills."
+    }
+  ]
+}
