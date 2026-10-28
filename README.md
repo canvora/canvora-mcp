@@ -10,7 +10,7 @@ npx skills add canvora/canvora-mcp
 [![Canvora MCP server](https://glama.ai/mcp/servers/canvora/canvora-mcp/badges/score.svg)](https://glama.ai/mcp/servers/canvora/canvora-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**Give your agent a design department.** Turn any idea, URL, doc, or PDF into finished, on-brand visuals: **82 formats** (posts, carousels, decks, PDFs, ads, infographics, landing-page kits), generated natively in **150+ languages** — including RTL and CJK. Brand kits keep every output in the client's colors, fonts, logo, and tone.
+**Give your agent a design department.** Turn any idea, URL, doc, or PDF into finished, on-brand visuals: **100+ formats** (posts, carousels, decks, PDFs, ads, infographics, landing-page kits), generated natively in **150+ languages** — including RTL and CJK. Brand kits keep every output in the client's colors, fonts, logo, and tone.
 
 ```bash
 canvora generate --idea "5 tips for remote work" \
@@ -23,7 +23,7 @@ Your agent writes the brief. Canvora does the design. The outputs are stable CDN
 
 This repo is the agent-facing toolkit for [Canvora](https://canvora.ai/for-agents):
 
-- **Agent skills** — [`skills/`](skills/): 11 task-specific skills, one `npx skills add` installs all of them into Claude Code, Cursor, Codex, OpenCode, OpenClaw and 60+ agents.
+- **Agent skills** — [`skills/`](skills/): 12 task-specific skills, one `npx skills add` installs all of them into Claude Code, Cursor, Codex, OpenCode, OpenClaw and 60+ agents.
 
   | Skill | For |
   |---|---|
@@ -72,7 +72,7 @@ More runnable recipes: [`examples/`](examples/)
 | `canvora edit <outputId> --prompt "..."` | Natural-language edit of one visual (previews the change; `--yes` auto-confirms) |
 | `canvora status <id>` | Check a generation and list its output URLs |
 | `canvora download <id> --dir out/` | Save all output files locally |
-| `canvora formats` | All 82 format IDs with dimensions (live catalog) |
+| `canvora formats` | All format IDs with dimensions (live catalog) |
 | `canvora brands` | Your brand kits (pass one via `--brand <uuid>`) |
 | `canvora credits` | Credit balance (10 credits per visual, 15 per carousel/deck slide) |
 
@@ -112,10 +112,26 @@ One remote server, OAuth sign-in, 16 tools your agent discovers on connect:
 |---|---|
 | **Server URL** | `https://api.canvora.ai/mcp` (streamable HTTP) |
 | **Claude** | Settings → Connectors → Add custom connector → OAuth Client ID `claude_mcp` |
-| **ChatGPT** | Settings → Apps → Developer mode → Create app → OAuth Client ID `chatgpt_mcp` |
+| **ChatGPT** | Apps → search **Canvora** → Connect, then start a message with `@Canvora` |
 | **Registry** | `ai.canvora/canvora` on the [official MCP Registry](https://registry.modelcontextprotocol.io) — also on [Glama](https://glama.ai/mcp/servers/canvora/canvora-mcp), [Smithery](https://smithery.ai/servers/canvora-ai/canvora-ai), [mcpservers.org](https://mcpservers.org/servers/canvora/canvora-mcp) |
 
 Step-by-step: [canvora.ai/help/integrations/mcp-setup](https://canvora.ai/help/integrations/mcp-setup)
+
+**stdio-only clients:** [`mcp/`](mcp/) is a small stdio server that forwards every call to the remote server with your API key (same 16 tools, nothing generated locally):
+
+```json
+{
+  "mcpServers": {
+    "canvora": {
+      "command": "node",
+      "args": ["/path/to/canvora-mcp/mcp/server.js"],
+      "env": { "CANVORA_API_KEY": "vd_..." }
+    }
+  }
+}
+```
+
+Run `npm install` in `mcp/` first, or use the [`Dockerfile`](Dockerfile): `docker build -t canvora-mcp . && docker run -i -e CANVORA_API_KEY=vd_... canvora-mcp`.
 
 ## Option 3 — Raw REST
 

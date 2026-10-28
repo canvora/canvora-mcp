@@ -1,0 +1,518 @@
+[
+  {
+    "name": "chat",
+    "title": "Chat with Canvora",
+    "description": "Send a message to Canvora's AI visual creation assistant. This is the primary tool for CREATING visuals — describe what you want (text content, a URL, an idea) and Canvora will analyze it, suggest formats, and prepare a generation.\n\nDo NOT use this tool to retrieve or display existing/past generations — use get_generation instead (omit generation_id to fetch the user's most recent generation). Do NOT use it for variations (create_variation), translations (localize_generation), or exports (export_visuals) of existing work.\n\nThe conversation is stateful — Canvora remembers context across messages. When ready, it returns generation parameters that you should present to the user for review before confirming with confirm_generation.\n\nExamples:\n- \"Create a LinkedIn carousel about remote work benefits\"\n- \"Make an infographic from https://myblog.com/article\"\n- \"I need social media visuals for a product launch\"\n- \"Make it 5 slides instead, use bold style\"",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "conversation_id": {
+          "type": "string"
+        },
+        "workspace_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "message"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "annotations": {
+      "title": "Chat with Canvora",
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "check_credits",
+    "title": "Check Credit Balance",
+    "description": "Check your current Canvora credit balance. Only call this when the user explicitly asks about their credits or balance.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "annotations": {
+      "title": "Check Credit Balance",
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "list_brands",
+    "title": "List Brand Kits",
+    "description": "List all brand kits in your Canvora account. Returns brand names, colors, fonts, logos, and tone. Use the brand ID with confirm_generation to apply brand styling.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "annotations": {
+      "title": "List Brand Kits",
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "list_formats",
+    "title": "List Visual Formats",
+    "description": "List the available visual formats with dimensions and categories. Canvora supports 100+ formats; use this to find the right format ID for confirm_generation.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "default": "all",
+          "type": "string",
+          "enum": [
+            "social",
+            "marketing",
+            "infographic",
+            "presentation",
+            "document",
+            "advertising",
+            "web",
+            "email",
+            "all"
+          ]
+        }
+      },
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "annotations": {
+      "title": "List Visual Formats",
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "get_generation",
+    "title": "Get Generation Status",
+    "description": "Get the status and outputs of a generation. Pass a generation_id to fetch that generation, or OMIT it to fetch the user's most recent generation (use this for \"show me my last generation\"). After calling confirm_generation, use this tool to poll for completion — poll every 10-15 seconds until status is \"completed\". Returns output image URLs when ready (outputs may arrive incrementally while status is \"processing\"). The visuals stay stored in the Canvora workspace (canvora.ai); the returned URLs can be previewed or downloaded in the chat.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "generation_id": {
+          "type": "string"
+        }
+      },
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "annotations": {
+      "title": "Get Generation Status",
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "confirm_generation",
+    "title": "Confirm & Generate Visuals",
+    "description": "Confirm and start a visual generation after the chat tool returns \"READY TO GENERATE\". Call this only after the user has reviewed and approved the generation settings.\n\nYou can pass overrides for in-place tweaks — style, brand, language, resolution, slide counts. Any parameter not provided uses the values from the chat conversation.\n\nTo CHANGE the format (especially to or from a carousel) or the content, call the chat tool again rather than overriding formats here — chat re-plans the design and recomputes the content-appropriate slide count. If you do override to a carousel format, you MUST include its carousel_counts, or the slide count won't match the content.\n\nReturns a generation ID immediately. Generation runs in the background (30-120 seconds). You MUST then call get_generation with the returned ID to poll for completion — wait 15 seconds before the first call, then poll every 10-15 seconds until status is \"completed\".\n\nIMPORTANT: Do NOT call confirm_generation again if it seems slow — that creates a duplicate generation and charges credits twice. Always use get_generation to check status instead.\n\nThe finished visuals are saved to the user's Canvora workspace (account and brand kit at canvora.ai) and are also returned as preview/downloadable URLs; poll get_generation to retrieve them.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "conversation_id": {
+          "type": "string"
+        },
+        "formats": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "visual_style": {
+          "type": "string"
+        },
+        "carousel_counts": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "type": "number"
+          }
+        },
+        "brand_id": {
+          "type": "string"
+        },
+        "embed_logo": {
+          "type": "boolean"
+        },
+        "include_cta": {
+          "type": "boolean"
+        },
+        "language": {
+          "type": "string"
+        },
+        "resolution": {
+          "type": "string",
+          "enum": [
+            "2K",
+            "4K"
+          ]
+        },
+        "use_exact_content": {
+          "type": "boolean"
+        },
+        "design_style_id": {
+          "type": "string"
+        },
+        "embedding_photos": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "workspace_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "annotations": {
+      "title": "Confirm & Generate Visuals",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "edit_image",
+    "title": "Edit Image",
+    "description": "Edit a visual in the user's Canvora workspace with a design operation. Pick the operation and describe the change in the instruction:\n- text: change, fix, translate, resize or restyle text on the design (e.g. \"change the headline to 'Summer Sale'\")\n- colour: colours, background colour, gradients, theme (e.g. \"make the background dark blue\")\n- layout: move, resize, align or remove elements, spacing, aspect ratio, decorative shapes or icons (e.g. \"move the logo to the top right\")\n- brand: add, move or replace the logo, apply brand colours or fonts (e.g. \"apply our brand colours\")\n\nEdits that change what the image depicts — the subject, people, products or scene, or adding new imagery — are not available through this connector and are declined with a link to the Canvora editor.\n\nThis is a two-step flow:\n1. First call with the operation and instruction — Canvora checks the edit and returns a refined edit plan for review\n2. Second call with confirmed=true and the confirmed_instruction — executes the edit\n\nAlways show the user the edit plan before confirming.\n\nThe edited visual is saved to the user's Canvora workspace (account and brand kit at canvora.ai) and is also returned as a preview/downloadable URL.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "text",
+            "colour",
+            "layout",
+            "brand"
+          ]
+        },
+        "generation_id": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string"
+        },
+        "output_index": {
+          "default": 0,
+          "type": "number"
+        },
+        "output_id": {
+          "type": "string"
+        },
+        "source_image_url": {
+          "type": "string"
+        },
+        "instruction": {
+          "type": "string"
+        },
+        "confirmed": {
+          "default": false,
+          "type": "boolean"
+        },
+        "confirmed_instruction": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation",
+        "instruction"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "annotations": {
+      "title": "Edit Image",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "create_variation",
+    "title": "Create Variations",
+    "description": "Create fresh visual variations of an existing generation. Use this tool whenever the user asks for \"variations\", \"alternatives\", \"different versions\", or \"more options\" for an existing generation.\n\nIMPORTANT: This is NOT the same as creating a new generation. This tool takes an existing generation_id and creates new visual designs from the same content. Do NOT use confirm_generation for variations — always use this tool.\n\nSEMANTICS: variations are created for EVERY visual in the generation, and count applies PER VISUAL — count=2 on a generation with 2 visuals produces 4 new images. Tell the user the real total before or when starting. (To vary just one specific visual, the user can use the per-visual Variations option in their Canvora dashboard.)\n\nCosts 10 credits per single image variation, 15 per carousel slide.\n\nNew variations are saved to the user's Canvora workspace (account and brand kit at canvora.ai) and are also returned as preview/downloadable URLs.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "generation_id": {
+          "type": "string"
+        },
+        "count": {
+          "default": 1,
+          "type": "number"
+        }
+      },
+      "required": [
+        "generation_id"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "annotations": {
+      "title": "Create Variations",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "export_visuals",
+    "title": "Export Visuals",
+    "description": "Export a completed generation as PDF, PowerPoint, or ZIP.\n- PDF: Ideal for LinkedIn carousel uploads (document posts)\n- PPTX: PowerPoint/Google Slides presentations\n- ZIP: Bulk download all images as PNG files\n\nReturns a downloadable file URL; the source visuals remain in the user's Canvora workspace (account at canvora.ai).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "generation_id": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "pdf",
+            "pptx",
+            "zip"
+          ]
+        }
+      },
+      "required": [
+        "generation_id",
+        "format"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "annotations": {
+      "title": "Export Visuals",
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "localize_generation",
+    "title": "Localize Visuals Into Multiple Languages",
+    "description": "Translate the visuals of a completed generation into one or more target languages. Each visual is translated in place (image-to-image) — the layout, colors, fonts, icons and imagery stay EXACTLY the same, only the text changes language. Canvora supports 150+ languages including RTL scripts (Arabic, Hebrew, Urdu) and CJK.\n\nPerfect for localizing a campaign: one LinkedIn carousel becomes Spanish, Japanese, Arabic and German variants in a single call.\n\nCosts 10 credits per translated image, per language (a 6-slide deck into Spanish = 60 credits). Up to 10 languages per call. Returns one generation ID per language — poll each with get_generation until status is \"completed\".\n\nThis translates ALL visuals in the chosen generation. If more than one generation exists in the chat, localize the specific generation the user is referring to — ask which one if it is unclear.\n\nSEMANTICS: this translates EVERY visual in the generation (each translated visual costs 10 credits). To translate just ONE visual (e.g. \"translate the Instagram post to Spanish\"), do NOT use this tool — use edit_image on that image with an instruction like \"Translate all visible text in this image into Spanish\", which translates only that visual.\n\nIMPORTANT: Confirm the target languages with the user before calling.\n\nLocalized visuals are saved to the user's Canvora workspace (account and brand kit at canvora.ai) and are also returned as preview/downloadable URLs.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "generation_id": {
+          "type": "string"
+        },
+        "languages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "generation_id",
+        "languages"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "annotations": {
+      "title": "Localize Visuals Into Multiple Languages",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "download_visual",
+    "title": "Download Visual",
+    "description": "Get the download URL for a specific output from a completed generation. Returns the direct image URL that can be opened or downloaded. The visual stays stored in the Canvora workspace (canvora.ai).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "generation_id": {
+          "type": "string"
+        },
+        "output_index": {
+          "default": 0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "generation_id"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "annotations": {
+      "title": "Download Visual",
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "convert_image",
+    "title": "Convert Image Format",
+    "description": "Convert an image to JPG, WebP, or PNG format. Returns the converted image as a downloadable URL.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "image_url": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "jpg",
+            "jpeg",
+            "webp",
+            "png"
+          ]
+        },
+        "quality": {
+          "default": 90,
+          "type": "number"
+        }
+      },
+      "required": [
+        "image_url",
+        "format"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "annotations": {
+      "title": "Convert Image Format",
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "list_workspaces",
+    "title": "List Workspaces",
+    "description": "List your workspaces and personal account. Use this when the user wants to generate visuals for a specific team or workspace. Returns workspace IDs, names, your role, and credit balances.\n\nPass the workspace_id to the chat or confirm_generation tools to create visuals under that workspace (uses workspace credits instead of personal).\n\nIf the user doesn't mention a workspace, default to personal (no workspace_id needed).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "annotations": {
+      "title": "List Workspaces",
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "get_edit_history",
+    "title": "Get Image Edit History",
+    "description": "Get the edit history of a generated image — original version plus every applied edit, with which version is current. Use before reverting an edit.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "generation_id": {
+          "type": "string"
+        },
+        "output_index": {
+          "default": 0,
+          "type": "number"
+        },
+        "output_id": {
+          "type": "string"
+        }
+      },
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "annotations": {
+      "title": "Get Image Edit History",
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "revert_edit",
+    "title": "Revert Image Edit",
+    "description": "Revert a generated image to a previous edit version or to the original. Free — does not consume credits. Use get_edit_history first to find edit IDs. The reverted visual stays in the Canvora workspace (canvora.ai) and is returned as a preview/downloadable URL.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "generation_id": {
+          "type": "string"
+        },
+        "output_index": {
+          "default": 0,
+          "type": "number"
+        },
+        "edit_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "annotations": {
+      "title": "Revert Image Edit",
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "upload_photo",
+    "title": "Upload Photo",
+    "description": "Upload a photo (base64) to be embedded in generated visuals — product shots, event photos, headshots. Returns a CDN URL to pass as embedding_photos to confirm_generation. Used primarily by the setup widget.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string"
+        },
+        "filename": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "annotations": {
+      "title": "Upload Photo",
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": true
+    }
+  }
+]

@@ -1,0 +1,12 @@
+{
+  "name": "canvora-mcp-stdio",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Canvora MCP over stdio: bridges to the hosted server at https://api.canvora.ai/mcp",
+  "type": "module",
+  "main": "server.js",
+  "bin": { "canvora-mcp": "server.js" },
+  "engines": { "node": ">=18" },
+  "dependencies": { "@modelcontextprotocol/sdk": "^1.32.2" },
+  "license": "MIT"
+}

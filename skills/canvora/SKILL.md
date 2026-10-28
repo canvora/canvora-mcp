@@ -1,7 +1,7 @@
 ---
 name: canvora
 version: 1.4.0
-description: Create on-brand visuals (social posts, carousels, decks, PDFs, ads, landing-page kits, infographics) from any idea, text, URL, or PDF via Canvora. 82 formats, native generation in 150+ languages, per-client brand kits. Use when the user asks to create, generate, or design visual content for social media, marketing, presentations, or documents.
+description: Create on-brand visuals (social posts, carousels, decks, PDFs, ads, landing-page kits, infographics) from any idea, text, URL, or PDF via Canvora. 100+ formats, native generation in 150+ languages, per-client brand kits. Use when the user asks to create, generate, or design visual content for social media, marketing, presentations, or documents.
 homepage: https://canvora.ai/for-agents
 metadata: {"openclaw":{"emoji":"🎨","requires":{"bins":["canvora"],"env":["CANVORA_API_KEY"]}}}
 ---
@@ -10,7 +10,7 @@ metadata: {"openclaw":{"emoji":"🎨","requires":{"bins":["canvora"],"env":["CAN
 
 Canvora turns ideas, text, URLs, docs, and PDFs into finished visuals: single
 images (10 credits) and multi-slide carousels/decks/documents (15 credits per
-slide) across 82 formats, generated natively in 150+ languages. Brand kits keep
+slide) across 100+ formats, generated natively in 150+ languages. Brand kits keep
 every output in the client's colors, fonts, logo, and tone.
 
 This is the core skill: setup, the generate loop, credits, and refinement.

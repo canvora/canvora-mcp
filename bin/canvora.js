@@ -22,7 +22,7 @@ process.stderr.on('error', (e) => { if (e.code === 'EPIPE') process.exit(0); thr
 
 const fs = require('fs');
 const path = require('path');
-const VERSION = '1.4.0';
+const VERSION = '1.4.1';
 const API_URL = (process.env.CANVORA_API_URL || 'https://api.canvora.ai').replace(/\/+$/, '');
 const API_KEY = process.env.CANVORA_API_KEY || '';
 const REQUEST_TIMEOUT_MS = 60000;
