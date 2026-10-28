@@ -1,8 +1,6 @@
 ---
 name: data-infographic
-version: 1.0.0
 description: Turn data, comparisons, processes and timelines into explanatory visuals with Canvora — process flows, comparison charts, timelines, stat cards, checklists and long-form infographics. Use when the user has numbers, steps, a before/after, a roadmap, or asks for an infographic or diagram.
-homepage: https://canvora.ai/for-agents
 ---
 
 # Infographics and explanatory visuals
@@ -11,7 +9,7 @@ The format is decided by the *shape of the information*, not by the platform.
 Get that mapping right and the output is good on the first run. These formats
 are the least discoverable in the catalog and among the most useful.
 
-Setup and credits: see the `canvora` skill.
+The generate loop and credits: see the `canvora` skill.
 
 ## Shape → format
 
@@ -33,51 +31,38 @@ dated → `timeline`; one number → `stat_card`; everything else → `infograph
 
 ## Intake
 
-1. **Show me the data.** Ask for the actual numbers, steps, or rows — not a
+1. **Show me the data.** Ask for the actual numbers, steps or rows, not a
    description of them. This is the one skill where vagueness in equals garbage
    out.
 2. **What's the takeaway?** One sentence. It becomes the headline and decides
    what gets emphasised.
 3. **Where does it go?** Social → the 4:5 formats. Deck or doc → the 3:4/4:3
-   ones. Both → generate both, they're 10 credits each.
-4. **Brand kit** → `--brand`.
+   ones. Both → generate both; they're 10 credits each.
+4. **Brand kit** → `brand_id`.
 
 ## The canonical runs
 
-```bash
-# Steps → process flow, wording preserved
-canvora generate --input "$STEPS_TEXT" --exact \
-  --format process_flow --brand $BRAND --wait --json
+`chat` messages (paste the data itself):
 
-# Us vs them
-canvora generate --input "$COMPARISON_TABLE" --exact \
-  --format comparison_chart,comparison_card --brand $BRAND --wait --json
+> Make a process_flow from these steps, keeping the wording exactly: [steps]
 
-# The one stat from a report
-canvora generate --input "73% of returns happen in the first 48 hours" --exact \
-  --format stat_card --brand $BRAND --logo --wait --json
+> Make a comparison_chart and a comparison_card from this table: [rows]
 
-# Full infographic from a report PDF
-canvora generate --file-url $REPORT_URL --format infographic_long --brand $BRAND --wait --json
+> Make a stat_card: "73% of returns happen in the first 48 hours".
 
-# Roadmap
-canvora generate --input "$MILESTONES" --exact --format timeline --brand $BRAND --wait --json
-```
+> Make a timeline of these milestones: [milestones]
 
-These are all single-image formats at 10 credits each — tell the user the total
-in the same message as the run, announcing it rather than asking permission.
-`--wait` is fine at 1-2 outputs. If you batch 3 or more formats
-into one call, drop `--wait`, capture the id with
-`ID=$(canvora generate ... | head -1)` and poll `canvora status "$ID" --json`
-instead — most harnesses kill a shell command at 120s while the generation
-carries on server-side. Never re-run `generate` after a timeout; that starts a
-second, separate job. See the `canvora` skill's "Long runs" section.
+Then `confirm_generation` with `use_exact_content: true` and `brand_id`, and
+poll `get_generation`.
 
-## The rule specific to data: use `--exact`
+These are single-image formats at 10 credits each: tell the user the total in
+the same message as the run, announcing it rather than asking permission.
 
-Numbers, labels, step names and dates must survive the pipeline unchanged.
-`--input "..." --exact` disables rewording. **A rephrased statistic is a wrong
-statistic** — this matters more here than anywhere else in Canvora.
+## The rule specific to data: exact content
+
+Numbers, labels, step names and dates must survive the pipeline unchanged, so
+set `use_exact_content: true`. **A rephrased statistic is a wrong statistic**;
+this matters more here than anywhere else in Canvora.
 
 Related: don't ask the model to *derive* data. If the user says "make a chart
 of our growth", get the actual figures first. Canvora renders what you give it;
@@ -85,23 +70,23 @@ it is not a spreadsheet.
 
 ## Craft notes
 
-- **Keep labels short.** ≤6 words per step/row. Long labels are the #1 cause of
-  cramped, unreadable infographics.
+- **Keep labels short.** ≤6 words per step or row. Long labels are the #1 cause
+  of cramped, unreadable infographics.
 - **One takeaway per visual.** Two competing messages → two visuals.
-- **`--style`:** data reads best as `minimal` or `corporate`; consumer-facing
+- **Style:** data reads best as `minimal` or `corporate`; consumer-facing
   explainers as `playful`; reports as `modern`.
 
 ## Delivery
 
 - Read the numbers back to the user against the source before they publish.
   A rendering error in a statistic is the worst failure mode in this skill.
-- Wrong label or figure? `canvora edit <outputId> --prompt "change 73% to 78%"
-  --yes` — 3 credits, design preserved.
+- Wrong label or figure? `edit_image` with `operation: "text"` and an
+  instruction like "change 73% to 78%": 3 credits, design preserved.
 
 ## Quality checklist
 
 - [ ] Format matches the information's shape
 - [ ] Real data supplied, never invented
-- [ ] `--exact` used so figures and labels survive verbatim
+- [ ] `use_exact_content` set so figures and labels survive verbatim
 - [ ] Labels ≤6 words; one takeaway per visual
 - [ ] Numbers verified against the source before delivery

@@ -1,6 +1,6 @@
-# Canvora for Claude Code
+# Canvora for Claude
 
-Turn any idea, URL, or document into on-brand marketing visuals: social posts, carousels, ads, slides, PDFs and landing-page kits, in 100+ formats and 150+ languages, matched to your brand kit.
+Turn any idea, URL, or document into on-brand marketing visuals: social posts, carousels, ads, slides, PDFs and landing-page visuals, in 100+ formats and 150+ languages, matched to your brand kit.
 
 This plugin bundles:
 
@@ -25,6 +25,7 @@ This plugin bundles:
 ## Install
 
 ```
+# Claude Code (in Cowork and the Claude apps, add Canvora from the plugin directory)
 /plugin marketplace add canvora/canvora-mcp
 /plugin install canvora@canvora
 ```
@@ -32,7 +33,7 @@ This plugin bundles:
 ## Setup
 
 1. Create a free Canvora account at [canvora.ai](https://canvora.ai). Free credits are included, no card needed.
-2. Optional, for the `canvora` command-line tool the skills use: create an API key at canvora.ai → Integrations → API Keys, then save it with `/plugin configure canvora@canvora`. It is stored in Claude Code's secure storage.
+2. The first time Claude uses a Canvora tool, sign in with that account. No API key or setup is needed; it works the same in Claude Code, Cowork and the Claude apps.
 
 Then ask in plain words, for example:
 

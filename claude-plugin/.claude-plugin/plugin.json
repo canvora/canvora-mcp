@@ -11,18 +11,19 @@
   "homepage": "https://canvora.ai/for-agents",
   "repository": "https://github.com/canvora/canvora-mcp",
   "license": "MIT",
-  "keywords": ["design", "marketing", "social-media", "carousel", "presentation", "branding", "localization", "visuals"],
+  "keywords": [
+    "design",
+    "marketing",
+    "social-media",
+    "carousel",
+    "presentation",
+    "branding",
+    "localization",
+    "visuals"
+  ],
   "icon": "./.claude-plugin/icon.png",
   "documentationUrl": "https://canvora.ai/help/integrations/mcp-setup",
   "supportUrl": "https://canvora.ai/support",
   "privacyPolicyUrl": "https://canvora.ai/privacy",
-  "termsOfServiceUrl": "https://canvora.ai/terms",
-  "userConfig": {
-    "api_key": {
-      "type": "string",
-      "title": "Canvora API key",
-      "description": "Optional, for the canvora CLI the skills use (canvora.ai → Integrations → API Keys, all plans incl. Free). The Canvora connector signs in with OAuth and doesn't need it.",
-      "sensitive": true
-    }
-  }
+  "termsOfServiceUrl": "https://canvora.ai/terms"
 }

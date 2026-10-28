@@ -1,107 +1,77 @@
 ---
 name: landing-page-visuals
-version: 1.0.0
-description: Generate a complete visual kit for a landing page from its URL — hero, features, process, stats, testimonials, comparison, timeline and CTA imagery, matched to the page's own sections. Use when the user wants landing page images, website section visuals, hero images, or asks to "make visuals for my site".
-homepage: https://canvora.ai/for-agents
+description: Generate visuals for a landing page's sections from its URL — hero, features, process, stats, testimonials, comparison, timeline and CTA imagery, matched to the page's own content. Use when the user wants landing page images, website section visuals, hero images, or asks to "make visuals for my site".
 ---
 
-# Landing page visual kits
+# Landing page section visuals
 
-Canvora has a section-aware mode that nothing else in the toolchain does: give
-it a URL and it reads the page's actual sections, decides which ones deserve a
-visual, and renders a matching kit. One command, a whole page's imagery, in the
-page's own language.
+Canvora has a set of landing-page formats sized and art-directed for website
+sections. Give it the page's URL and the sections you want, and every visual is
+built from the page's own content, in the page's own language.
+The generate loop and credits: see the `canvora` skill.
 
-Requires the **Starter plan or higher** — a 403 here means the plan, not auth.
-Setup and credits: see the `canvora` skill.
-
-## The one command
-
-```bash
-ID=$(canvora generate --url https://example.com --landing-page \
-  --brand $BRAND --logo | head -1)
-canvora status "$ID" --json    # repeat every ~30s until completed
-```
-
-`--format` is not required in this mode: the kit is derived from the page.
-`--landing-page` requires `--url` (it has nothing to read otherwise).
-
-A kit is up to 10 visuals, so fire-and-poll rather than `--wait` — most
-harnesses kill a shell command at 120s while the kit carries on rendering
-server-side. Never re-run `generate` after a timeout; poll `status`
-(detail in the `canvora` skill's "Long runs" section). Say the cost in the same
-message as the run: 10 credits per visual, so a full kit is up to 100. Announce
-it, don't ask permission — but if the page could yield the full 10 and they
-only wanted a hero, settle that first.
-
-## What it produces, and what it deliberately skips
-
-The pipeline maps sections onto these formats:
+## The section formats
 
 | Format | Section |
 |---|---|
 | `landingPage-Hero` | 21:9 hero banner |
 | `landingPage-Feature` | feature blocks |
-| `landingPage-Process` | how-it-works |
+| `landingPage-Process` | how it works |
 | `landingPage-Showcase` | product showcase |
+| `landingPage-UseCase` | use cases |
 | `landingPage-Stats` | metrics / proof |
 | `landingPage-Testimonial` | quotes |
 | `landingPage-Comparison` | vs / before-after |
 | `landingPage-Timeline` | roadmap / history |
 | `landingPage-CTA` | closing call to action |
-| `landingPage-UseCase` | **never auto-emitted** — name it explicitly to get it |
 
-Caps and guarantees, so you can set expectations before spending credits:
-
-- at most **10 sections** and **10 visuals** per run; at most **5 per section**
-- **hero and CTA are never trimmed** — everything else competes for slots
-- FAQ, team, contact, footer and logo walls are intentionally skipped: they are
-  not visual sections. If the user wants one anyway, generate it as a normal
-  format in a separate call.
-
-Note the IDs are camelCase with a hyphen — `landingPage-Hero`, not
+The IDs are camelCase with a hyphen: `landingPage-Hero`, not
 `landing_page_hero`. Guessing the snake_case version fails.
+
+10 credits per visual. Say the total in the same message as the run, announcing
+it rather than asking permission. A whole page can run to 8-10 visuals, so if
+they only wanted a hero, settle that first.
 
 ## Intake
 
 Usually just: **the URL** and **the brand kit**. Then two judgement calls:
 
-1. **Is the page live and public?** The page has to be publicly fetchable —
-   staging behind auth, localhost, and password walls won't work. Ask for the
+1. **Is the page live and public?** The page has to be publicly fetchable;
+   staging behind auth, localhost and password walls won't work. Ask for the
    public URL.
-2. **Whole page or one section?** If they only want a hero, don't use this mode
-   — run `--format landingPage-Hero` with `--url` normally and spend 10 credits
-   instead of a kit's worth.
+2. **Which sections?** Look at what the page actually has. Hero and CTA are
+   almost always worth it; add Feature, Process, Stats, Testimonial, Comparison
+   or Timeline only where the page has that section. FAQ, team, contact, footer
+   and logo walls are not visual sections; skip them.
 
 Language is taken from the site itself, so a Spanish page yields Spanish
 visuals without you passing anything.
 
-## Selective runs (when the kit is overkill)
+## The canonical runs
 
-```bash
-# Just the hero
-canvora generate --url $URL --format landingPage-Hero --brand $BRAND --wait --json
+`chat` messages:
 
-# Hero + CTA + the use-case visual the kit never emits on its own (3 outputs — poll)
-ID=$(canvora generate --url $URL \
-  --format landingPage-Hero,landingPage-CTA,landingPage-UseCase \
-  --brand $BRAND | head -1)
-canvora status "$ID" --json
+> Create a landing-page hero (landingPage-Hero) for https://example.com, using
+> our brand kit.
 
-```
+> From https://example.com, create landing-page visuals for its sections:
+> landingPage-Hero, landingPage-Feature, landingPage-Process,
+> landingPage-Testimonial and landingPage-CTA.
+
+Then `confirm_generation` with `brand_id` (and `embed_logo: true` if they want
+the mark), and poll `get_generation`.
 
 ## After generation
 
-- Hand back **URL per section**, not a flat list — the user has to place these.
-  Sort by `sortOrder` and label each with its format ID.
-- A section that looks wrong is an `edit` (3 credits), not a re-run of the kit.
-- Rebranding later? `canvora variations <id>` or re-run with a different
-  `--brand`; the page reading is the expensive part, not the rendering.
+- Hand back **one URL per section**, not a flat list: the user has to place
+  these. Label each with its section and format ID.
+- A section that looks wrong is an `edit_image` (3 credits), not a re-run.
+- Want other options for the whole set? `create_variation`.
 
 ## Quality checklist
 
 - [ ] Public, live URL confirmed
-- [ ] `--landing-page` used only for a whole kit; single sections run as normal formats
+- [ ] Only sections the page actually has; hero-only requests stay hero-only
 - [ ] Brand kit applied
+- [ ] Cost stated before the run; plan shown before confirming
 - [ ] Outputs labelled by section, not dumped as a list
-- [ ] Plan gate explained if a 403 comes back
